@@ -1061,6 +1061,8 @@ html, body {
 .pixel-avatar {
   display: none;
   margin-top: 8px;
+  width: 160px;
+  height: 160px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   border: 2px solid rgba(0, 240, 255, 0.25);

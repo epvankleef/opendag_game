@@ -158,8 +158,8 @@ app.post('/api/generate-character', async (req, res) => {
     }
 
     const avatarInstruction = avatarDesc
-      ? `De speler wil een avatar die lijkt op: "${avatarDesc}". Maak een pixel art avatar als een 10x10 grid van hex kleuren. Gebruik "" (lege string) voor transparante pixels. BELANGRIJK: Centreer de afbeelding in het 10x10 grid en gebruik het hele grid. Maak het herkenbaar. Houd het kindvriendelijk!`
-      : `Maak een pixel art avatar passend bij het karakter als een 10x10 grid van hex kleuren. Gebruik "" (lege string) voor transparante pixels. BELANGRIJK: Centreer de afbeelding in het 10x10 grid en gebruik het hele grid.`;
+      ? `De speler wil een avatar die lijkt op: "${avatarDesc}". Maak een pixel art avatar als een 16x16 grid van hex kleuren. Gebruik "" (lege string) voor transparante pixels. BELANGRIJK: Centreer de afbeelding in het 16x16 grid en gebruik het hele grid. Maak het herkenbaar. Houd het kindvriendelijk!`
+      : `Maak een pixel art avatar passend bij het karakter als een 16x16 grid van hex kleuren. Gebruik "" (lege string) voor transparante pixels. BELANGRIJK: Centreer de afbeelding in het 16x16 grid en gebruik het hele grid.`;
 
     const prompt = `${SYSTEM_PROMPT}
 
@@ -184,7 +184,7 @@ Antwoord in dit exacte JSON formaat:
     "correct": "#hexkleur (kleur voor goed antwoord)",
     "wrong": "#hexkleur (kleur voor fout antwoord)"
   },
-  "pixelAvatar": [[row of 10 hex color strings or "" for transparent], ...10 rows total],
+  "pixelAvatar": [[row of 16 hex color strings or "" for transparent], ...16 rows total],
   "achtergrondStijl": "een van: neon, retro, space, graffiti, natuur, pixel, cyber",
   "ui": {
     "startKnop": "tekst voor start knop in stijl",

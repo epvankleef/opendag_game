@@ -26,6 +26,13 @@ class QuizScene extends Phaser.Scene {
       this.nextQuestion();
     };
 
+    // Reset UI state from previous session
+    document.getElementById('quiz-feedback').classList.add('hidden');
+    document.getElementById('quiz-answers').innerHTML = '';
+    document.getElementById('quiz-question').textContent = '';
+    document.getElementById('quiz-intro').textContent = '';
+    document.getElementById('next-btn').textContent = 'VOLGENDE ▶';
+
     // Quit button - back to setup
     document.getElementById('quit-btn').onclick = () => {
       if (this.timerInterval) clearInterval(this.timerInterval);

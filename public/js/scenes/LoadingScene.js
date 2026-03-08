@@ -90,10 +90,10 @@ class LoadingScene extends Phaser.Scene {
         const grid = character.pixelAvatar;
         const rows = grid.length;
         const cols = grid[0] ? grid[0].length : 0;
-        const pixelSize = Math.floor(160 / Math.max(rows, cols));
-        const offsetX = Math.floor((160 - cols * pixelSize) / 2);
-        const offsetY = Math.floor((160 - rows * pixelSize) / 2);
-        ctx.clearRect(0, 0, 160, 160);
+        const pixelSize = Math.floor(256 / Math.max(rows, cols));
+        const offsetX = Math.floor((256 - cols * pixelSize) / 2);
+        const offsetY = Math.floor((256 - rows * pixelSize) / 2);
+        ctx.clearRect(0, 0, 256, 256);
         for (let y = 0; y < rows; y++) {
           for (let x = 0; x < (grid[y] ? grid[y].length : 0); x++) {
             const color = grid[y][x];

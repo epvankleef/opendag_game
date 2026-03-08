@@ -165,6 +165,7 @@
           <span class="stat-label">STREAK</span>
           <span class="stat-value" id="quiz-streak">🔥 0</span>
         </div>
+        <button class="quit-btn" id="quit-btn" title="Stoppen">✕</button>
       </div>
 
       <!-- Timer bar -->
@@ -188,6 +189,19 @@
         <p class="feedback-explanation" id="feedback-explanation"></p>
         <button class="next-btn" id="next-btn">VOLGENDE ▶</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Fun Fact overlay -->
+  <div id="funfact-overlay" class="overlay hidden">
+    <div class="funfact-panel">
+      <div class="funfact-emoji" id="funfact-emoji">🤯</div>
+      <h3 class="funfact-title" id="funfact-title">WIST JE DAT...?</h3>
+      <p class="funfact-text" id="funfact-text"></p>
+      <button class="start-btn funfact-btn" id="funfact-continue-btn">
+        <span class="btn-text">DOOR NAAR VRAAG</span>
+        <span class="btn-icon">▶</span>
+      </button>
     </div>
   </div>
 
@@ -229,10 +243,16 @@
         <div class="leaderboard-list" id="leaderboard-list"></div>
       </div>
 
-      <button id="replay-btn" class="start-btn">
-        <span class="btn-text">OPNIEUW SPELEN</span>
-        <span class="btn-icon">🔄</span>
-      </button>
+      <div class="gameover-buttons">
+        <button id="replay-btn" class="start-btn">
+          <span class="btn-text">OPNIEUW SPELEN</span>
+          <span class="btn-icon">🔄</span>
+        </button>
+        <button id="home-btn" class="start-btn home-btn">
+          <span class="btn-text">START MENU</span>
+          <span class="btn-icon">🏠</span>
+        </button>
+      </div>
     </div>
   </div>
 

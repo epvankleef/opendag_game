@@ -329,6 +329,48 @@ Rank regels: <30%=Bronze, <50%=Silver, <70%=Gold, <90%=Platinum, >=90%=Diamond`;
   }
 });
 
+// POST /api/generate-funfact
+app.post('/api/generate-funfact', async (req, res) => {
+  try {
+    let { thema, taal, vraagNummer, stijl, karakterNaam } = req.body;
+    thema = sanitizeInput(thema);
+    taal = sanitizeInput(taal, 30);
+    stijl = sanitizeInput(stijl, 50);
+
+    const isOpleidingTip = vraagNummer === 6;
+
+    const prompt = `${SYSTEM_PROMPT}
+
+Je bent "${karakterNaam || 'De Quizmaster'}" in de stijl van een ${stijl || 'game streamer'}.
+Taal: ${taal || 'Nederlands'}
+Thema: ${thema || 'AI & Technologie'}
+
+${isOpleidingTip
+  ? `Genereer een korte, enthousiaste tip over wat je leert bij de MBO4 opleiding Software Developer - Applied AI. Link het aan het thema "${thema}". Maak het aantrekkelijk voor jongeren van 12-16 jaar. Bijvoorbeeld: "Bij onze opleiding leer je zelf AI-modellen bouwen!" of "In jaar 2 maak je je eigen game met Unity!"`
+  : `Genereer een verrassend, cool "Wist je dat...?" weetje over technologie, AI, of software development. Het moet gerelateerd zijn aan het thema "${thema}". Maak het mind-blowing voor jongeren van 12-16 jaar.`}
+
+Antwoord in dit exacte JSON formaat:
+{
+  "type": "${isOpleidingTip ? 'opleiding' : 'funfact'}",
+  "titel": "${isOpleidingTip ? 'BIJ ONZE OPLEIDING...' : 'WIST JE DAT...?'}",
+  "tekst": "het weetje of de tip (max 30 woorden)",
+  "emoji": "1 passend emoji"
+}`;
+
+    const text = await callLLM(prompt);
+    const funfact = parseJSON(text);
+    res.json(funfact);
+  } catch (error) {
+    console.error('Error generating funfact:', error.message || error);
+    res.json({
+      type: 'funfact',
+      titel: 'WIST JE DAT...?',
+      tekst: 'AI kan in milliseconden quizvragen genereren die uniek zijn - geen enkele vraag is hetzelfde!',
+      emoji: '🤯'
+    });
+  }
+});
+
 // ============================================
 // Database (SQLite - persistent highscores)
 // ============================================

@@ -36,6 +36,15 @@ const API = {
     return res.json();
   },
 
+  async generateFunFact(params) {
+    const res = await fetch('/api/generate-funfact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+    return res.json();
+  },
+
   async getHighscores() {
     const res = await fetch('/api/highscores');
     return res.json();

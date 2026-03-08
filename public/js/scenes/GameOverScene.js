@@ -94,18 +94,27 @@ class GameOverScene extends Phaser.Scene {
       await this.showLeaderboard();
     };
 
-    // Replay button
-    document.getElementById('replay-btn').onclick = () => {
-      overlay.classList.add('hidden');
-
-      // Reset theme colors to defaults
+    // Reset colors helper
+    const resetColors = () => {
       const root = document.documentElement;
       Object.entries(DEFAULT_COLORS).forEach(([key, value]) => {
         root.style.setProperty(`--${key}`, value);
       });
       root.style.setProperty('--bg-dark', '#0a0a1a');
+    };
 
+    // Replay button - back to setup
+    document.getElementById('replay-btn').onclick = () => {
+      overlay.classList.add('hidden');
+      resetColors();
       this.scene.start('SetupScene');
+    };
+
+    // Home button - back to title screen
+    document.getElementById('home-btn').onclick = () => {
+      overlay.classList.add('hidden');
+      resetColors();
+      this.scene.start('TitleScene');
     };
   }
 

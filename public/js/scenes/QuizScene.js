@@ -26,6 +26,18 @@ class QuizScene extends Phaser.Scene {
       this.nextQuestion();
     };
 
+    // Quit button - back to setup
+    document.getElementById('quit-btn').onclick = () => {
+      if (this.timerInterval) clearInterval(this.timerInterval);
+      overlay.classList.add('hidden');
+      const root = document.documentElement;
+      Object.entries(DEFAULT_COLORS).forEach(([key, value]) => {
+        root.style.setProperty(`--${key}`, value);
+      });
+      root.style.setProperty('--bg-dark', '#0a0a1a');
+      this.scene.start('TitleScene');
+    };
+
     // Start first question
     this.loadQuestion();
   }
@@ -52,7 +64,7 @@ class QuizScene extends Phaser.Scene {
     // Mystery mode: random theme each question
     let thema = this.settings.thema;
     if (this.settings.modifier === 'mystery') {
-      const themes = ['Pokemon', 'Fortnite', 'Minecraft', 'FIFA & Voetbal', 'Marvel', 'Anime', 'Wetenschap', 'Ruimte', 'Dieren', 'Muziek', 'TikTok & YouTube', 'Sport', 'AI & Technologie'];
+      const themes = ['AI & Kunstmatige Intelligentie', 'Software Development & Programmeren', 'AI Tools zoals ChatGPT, Copilot en Midjourney', 'Game Development & Game Design', 'AR, VR en Mixed Reality', 'Cybersecurity & Ethical Hacking', 'Robotica & Automatisering', 'Data Science & Machine Learning', 'Cloud Computing & DevOps', 'Internet of Things & Smart Devices', 'Web Development & Apps', 'Blockchain & Crypto Technologie'];
       thema = themes[Math.floor(Math.random() * themes.length)];
     }
 
@@ -307,9 +319,55 @@ class QuizScene extends Phaser.Scene {
         totalQuestions: GAME_CONFIG.totalQuestions,
         highestStreak: this.highestStreak,
       });
+    } else if (this.currentQuestion === 3 || this.currentQuestion === 6) {
+      // Show fun fact / opleiding tip after question 3 and 6
+      this.showFunFact();
     } else {
       this.loadQuestion();
     }
+  }
+
+  async showFunFact() {
+    const quizOverlay = document.getElementById('quiz-overlay');
+    const funfactOverlay = document.getElementById('funfact-overlay');
+    const panel = document.querySelector('.funfact-panel');
+
+    quizOverlay.classList.add('hidden');
+
+    // Set loading state
+    document.getElementById('funfact-emoji').textContent = '⏳';
+    document.getElementById('funfact-title').textContent = 'EVEN GEDULD...';
+    document.getElementById('funfact-text').textContent = 'AI genereert een weetje...';
+    panel.className = 'funfact-panel';
+    funfactOverlay.classList.remove('hidden');
+
+    try {
+      const fact = await API.generateFunFact({
+        thema: this.settings.thema,
+        taal: this.settings.taal,
+        stijl: this.settings.stijl,
+        karakterNaam: this.character.naam,
+        vraagNummer: this.currentQuestion,
+      });
+
+      document.getElementById('funfact-emoji').textContent = fact.emoji || '🤯';
+      document.getElementById('funfact-title').textContent = fact.titel || 'WIST JE DAT...?';
+      document.getElementById('funfact-text').textContent = fact.tekst || '';
+
+      if (fact.type === 'opleiding') {
+        panel.classList.add('opleiding');
+      }
+    } catch {
+      document.getElementById('funfact-emoji').textContent = '🤯';
+      document.getElementById('funfact-title').textContent = 'WIST JE DAT...?';
+      document.getElementById('funfact-text').textContent = 'AI kan in milliseconden unieke quizvragen genereren - elke keer anders!';
+    }
+
+    document.getElementById('funfact-continue-btn').onclick = () => {
+      funfactOverlay.classList.add('hidden');
+      quizOverlay.classList.remove('hidden');
+      this.loadQuestion();
+    };
   }
 
   shutdown() {

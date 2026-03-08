@@ -534,6 +534,28 @@ html, body {
   justify-content: space-between;
   margin-bottom: 16px;
   gap: 12px;
+  align-items: stretch;
+}
+
+.quit-btn {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 51, 85, 0.3);
+  color: var(--wrong);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+}
+
+.quit-btn:hover {
+  background: rgba(255, 51, 85, 0.15);
+  border-color: var(--wrong);
+  box-shadow: 0 0 10px rgba(255, 51, 85, 0.3);
 }
 
 .quiz-stat {
@@ -890,6 +912,76 @@ html, body {
   text-shadow: var(--glow-accent);
   margin-bottom: 20px;
   letter-spacing: 1px;
+}
+
+.gameover-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.gameover-buttons .start-btn {
+  flex: 1;
+}
+
+.home-btn {
+  border-color: var(--secondary) !important;
+  color: var(--secondary) !important;
+  text-shadow: var(--glow-secondary) !important;
+  box-shadow: var(--glow-secondary) !important;
+}
+
+/* ============================================
+   Fun Fact Panel
+   ============================================ */
+
+.funfact-panel {
+  text-align: center;
+  padding: 40px;
+  background: var(--bg-panel);
+  border: 2px solid var(--accent);
+  box-shadow: var(--glow-accent);
+  border-radius: 4px;
+  max-width: 500px;
+  width: 90%;
+  animation: characterReveal 0.5s ease-out;
+}
+
+.funfact-panel.opleiding {
+  border-color: var(--secondary);
+  box-shadow: var(--glow-secondary);
+}
+
+.funfact-emoji {
+  font-size: 56px;
+  margin-bottom: 12px;
+  animation: bounce 1s ease infinite;
+}
+
+.funfact-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--accent);
+  text-shadow: var(--glow-accent);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.funfact-panel.opleiding .funfact-title {
+  color: var(--secondary);
+  text-shadow: var(--glow-secondary);
+}
+
+.funfact-text {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.funfact-btn {
+  margin-top: 0 !important;
 }
 
 /* ============================================

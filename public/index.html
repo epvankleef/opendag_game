@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizRoyale — AI-Powered Quiz Game</title>
+
+  <!-- Fonts: Press Start 2P for pixel headings, Exo 2 for clean body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Exo+2:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- CRT scanline overlay -->
+  <div class="scanlines"></div>
+
+  <!-- Phaser game container -->
+  <div id="game-container"></div>
+
+  <!-- Setup overlay (HTML form, hidden by default) -->
+  <div id="setup-overlay" class="overlay hidden">
+    <div class="setup-panel">
+      <h2 class="setup-title glitch-text" data-text="KIES JE SETTINGS">KIES JE SETTINGS</h2>
+
+      <div class="setup-grid">
+        <!-- Thema -->
+        <div class="setup-section">
+          <label class="setup-label">THEMA</label>
+          <div class="theme-grid" id="theme-grid">
+            <button class="theme-btn selected" data-theme="AI & Kunstmatige Intelligentie">🤖 AI</button>
+            <button class="theme-btn" data-theme="Software Development & Programmeren">💻 Software Dev</button>
+            <button class="theme-btn" data-theme="AI Tools zoals ChatGPT, Copilot en Midjourney">🛠️ AI Tools</button>
+            <button class="theme-btn" data-theme="Game Development & Game Design">🎮 Game Dev</button>
+            <button class="theme-btn" data-theme="AR, VR en Mixed Reality">🥽 AR / VR</button>
+            <button class="theme-btn" data-theme="Cybersecurity & Ethical Hacking">🔒 Cyber Security</button>
+            <button class="theme-btn" data-theme="Robotica & Automatisering">🤖 Robotica</button>
+            <button class="theme-btn" data-theme="Data Science & Machine Learning">📊 Data Science</button>
+            <button class="theme-btn" data-theme="Cloud Computing & DevOps">☁️ Cloud & DevOps</button>
+            <button class="theme-btn" data-theme="Internet of Things & Smart Devices">📡 IoT</button>
+            <button class="theme-btn" data-theme="Web Development & Apps">🌐 Web Dev</button>
+            <button class="theme-btn" data-theme="Blockchain & Crypto Technologie">⛓️ Blockchain</button>
+          </div>
+          <div class="custom-theme-row">
+            <input type="text" id="custom-theme" class="neon-input" placeholder="Of typ je eigen thema..." maxlength="60">
+          </div>
+        </div>
+
+        <!-- Stijl -->
+        <div class="setup-section">
+          <label class="setup-label">QUIZMASTER STIJL</label>
+          <select id="style-select" class="neon-select">
+            <option value="Game Streamer / YouTuber">🎬 Game Streamer</option>
+            <option value="Rapper / Hiphopper">🎤 Rapper</option>
+            <option value="Piraat">🏴‍☠️ Piraat</option>
+            <option value="Boze gymleraar">😤 Boze Gymleraar</option>
+            <option value="Gekke professor">🧪 Gekke Professor</option>
+            <option value="Sportcommentator">📣 Sportcommentator</option>
+            <option value="Ridder uit de middeleeuwen">⚔️ Ridder</option>
+            <option value="Alien die net op aarde is geland">👽 Alien</option>
+            <option value="Superheld">🦸 Superheld</option>
+            <option value="TikTok influencer">📱 TikTok Influencer</option>
+          </select>
+        </div>
+
+        <!-- Moeilijkheid -->
+        <div class="setup-section">
+          <label class="setup-label">MOEILIJKHEID</label>
+          <div class="difficulty-row">
+            <button class="diff-btn selected" data-diff="Chill">😎 CHILL</button>
+            <button class="diff-btn" data-diff="Normal">🔥 NORMAL</button>
+            <button class="diff-btn" data-diff="Beast Mode">💀 BEAST</button>
+          </div>
+        </div>
+
+        <!-- Taal -->
+        <div class="setup-section">
+          <label class="setup-label">TAAL / VIBE</label>
+          <select id="language-select" class="neon-select">
+            <option value="Nederlands">🇳🇱 Nederlands</option>
+            <option value="Engels">🇬🇧 Engels</option>
+            <option value="Straattaal">🔥 Straattaal</option>
+            <option value="Overdreven deftig en formeel">🎩 Deftig</option>
+            <option value="Zoals een kleuter het zou zeggen">👶 Kleuter-taal</option>
+          </select>
+        </div>
+
+        <!-- Vraagtype -->
+        <div class="setup-section">
+          <label class="setup-label">VRAAGTYPE</label>
+          <div class="difficulty-row">
+            <button class="type-btn selected" data-type="Multiple Choice">📋 Multiple Choice</button>
+            <button class="type-btn" data-type="Waar of Niet Waar">✅ Waar/Niet Waar</button>
+            <button class="type-btn" data-type="Wie ben ik?">🎭 Wie Ben Ik?</button>
+          </div>
+        </div>
+
+        <!-- Game Modifier -->
+        <div class="setup-section">
+          <label class="setup-label">GAME MODIFIER</label>
+          <div class="difficulty-row">
+            <button class="mod-btn selected" data-mod="none">🎮 Normaal</button>
+            <button class="mod-btn" data-mod="speed">⚡ Speed Round</button>
+            <button class="mod-btn" data-mod="mystery">🎲 Mystery</button>
+            <button class="mod-btn" data-mod="boss">👑 Boss Vraag</button>
+          </div>
+        </div>
+        <!-- Avatar beschrijving -->
+        <div class="setup-section">
+          <label class="setup-label">BESCHRIJF JE AVATAR</label>
+          <input type="text" id="avatar-desc" class="neon-input" placeholder="Bijv: een robot met zonnebril, een draak met koptelefoon..." maxlength="80">
+        </div>
+      </div>
+
+      <button id="start-quiz-btn" class="start-btn">
+        <span class="btn-text">START QUIZ</span>
+        <span class="btn-icon">▶</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="overlay hidden">
+    <div class="loading-panel">
+      <div class="loading-spinner"></div>
+      <p class="loading-text" id="loading-text">AI is je quizmaster aan het maken...</p>
+      <div class="loading-bar-container">
+        <div class="loading-bar" id="loading-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character reveal overlay -->
+  <div id="character-overlay" class="overlay hidden">
+    <div class="character-panel">
+      <div class="avatar-container" id="avatar-container">
+        <div class="character-emoji" id="char-emoji">🎮</div>
+        <canvas id="pixel-avatar" class="pixel-avatar" width="160" height="160"></canvas>
+      </div>
+      <h2 class="character-name glitch-text" id="char-name" data-text=""></h2>
+      <p class="character-catchphrase" id="char-catchphrase"></p>
+      <p class="character-desc" id="char-desc"></p>
+      <button id="lets-go-btn" class="start-btn">
+        <span class="btn-text">LET'S GO!</span>
+        <span class="btn-icon">🚀</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz overlay -->
+  <div id="quiz-overlay" class="overlay hidden">
+    <div class="quiz-panel">
+      <!-- Top bar -->
+      <div class="quiz-top-bar">
+        <div class="quiz-stat">
+          <span class="stat-label">SCORE</span>
+          <span class="stat-value" id="quiz-score">0</span>
+        </div>
+        <div class="quiz-stat">
+          <span class="stat-label">VRAAG</span>
+          <span class="stat-value" id="quiz-number">1/10</span>
+        </div>
+        <div class="quiz-stat streak-stat">
+          <span class="stat-label">STREAK</span>
+          <span class="stat-value" id="quiz-streak">🔥 0</span>
+        </div>
+      </div>
+
+      <!-- Timer bar -->
+      <div class="timer-container">
+        <div class="timer-bar" id="timer-bar"></div>
+        <span class="timer-text" id="timer-text">15</span>
+      </div>
+
+      <!-- Quizmaster intro -->
+      <div class="quiz-intro" id="quiz-intro"></div>
+
+      <!-- Question -->
+      <div class="quiz-question" id="quiz-question"></div>
+
+      <!-- Answer buttons -->
+      <div class="quiz-answers" id="quiz-answers"></div>
+
+      <!-- Feedback -->
+      <div class="quiz-feedback hidden" id="quiz-feedback">
+        <p class="feedback-text" id="feedback-text"></p>
+        <p class="feedback-explanation" id="feedback-explanation"></p>
+        <button class="next-btn" id="next-btn">VOLGENDE ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over overlay -->
+  <div id="gameover-overlay" class="overlay hidden">
+    <div class="gameover-panel">
+      <h2 class="gameover-title glitch-text" data-text="GAME OVER">GAME OVER</h2>
+      <div class="rank-badge" id="rank-badge">
+        <span class="rank-icon" id="rank-icon">💎</span>
+        <span class="rank-name" id="rank-name">DIAMOND</span>
+      </div>
+      <div class="player-title" id="player-title"></div>
+      <div class="final-score">
+        <span class="final-score-label">SCORE</span>
+        <span class="final-score-value" id="final-score">0</span>
+      </div>
+      <div class="final-stats">
+        <div class="final-stat">
+          <span class="final-stat-value" id="final-correct">0/10</span>
+          <span class="final-stat-label">CORRECT</span>
+        </div>
+        <div class="final-stat">
+          <span class="final-stat-value" id="final-streak">0</span>
+          <span class="final-stat-label">BESTE STREAK</span>
+        </div>
+      </div>
+      <p class="gameover-story" id="gameover-story"></p>
+      <p class="gameover-closer" id="gameover-closer"></p>
+
+      <!-- Naam invoer voor highscore -->
+      <div class="highscore-submit" id="highscore-submit">
+        <input type="text" id="player-name" class="neon-input" placeholder="Typ je naam voor het leaderboard..." maxlength="20">
+        <button id="submit-score-btn" class="next-btn">SCORE OPSLAAN ⚡</button>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="leaderboard hidden" id="leaderboard">
+        <h3 class="leaderboard-title">🏆 LEADERBOARD</h3>
+        <div class="leaderboard-list" id="leaderboard-list"></div>
+      </div>
+
+      <button id="replay-btn" class="start-btn">
+        <span class="btn-text">OPNIEUW SPELEN</span>
+        <span class="btn-icon">🔄</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/scenes/BootScene.js"></script>
+  <script src="js/scenes/TitleScene.js"></script>
+  <script src="js/scenes/SetupScene.js"></script>
+  <script src="js/scenes/LoadingScene.js"></script>
+  <script src="js/scenes/QuizScene.js"></script>
+  <script src="js/scenes/GameOverScene.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

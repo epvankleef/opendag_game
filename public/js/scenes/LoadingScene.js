@@ -83,29 +83,12 @@ class LoadingScene extends Phaser.Scene {
       charCatchphrase.textContent = `"${character.catchphrase || 'Let the quiz begin!'}"`;
       charDesc.textContent = character.beschrijving || '';
 
-      // Render pixel avatar if available
-      const pixelCanvas = document.getElementById('pixel-avatar');
-      if (character.pixelAvatar && Array.isArray(character.pixelAvatar)) {
-        const ctx = pixelCanvas.getContext('2d');
-        const grid = character.pixelAvatar;
-        const rows = grid.length;
-        const cols = grid[0] ? grid[0].length : 0;
-        const pixelSize = Math.floor(256 / Math.max(rows, cols));
-        const offsetX = Math.floor((256 - cols * pixelSize) / 2);
-        const offsetY = Math.floor((256 - rows * pixelSize) / 2);
-        ctx.clearRect(0, 0, 256, 256);
-        for (let y = 0; y < rows; y++) {
-          for (let x = 0; x < (grid[y] ? grid[y].length : 0); x++) {
-            const color = grid[y][x];
-            if (color && color !== '') {
-              ctx.fillStyle = color;
-              ctx.fillRect(offsetX + x * pixelSize, offsetY + y * pixelSize, pixelSize, pixelSize);
-            }
-          }
-        }
-        pixelCanvas.style.display = 'block';
-      } else {
-        pixelCanvas.style.display = 'none';
+      // Style avatar ring with character's primary color
+      const avatarRing = document.getElementById('avatar-ring');
+      if (avatarRing && character.kleuren && character.kleuren.primary) {
+        const c = character.kleuren.primary;
+        avatarRing.style.borderColor = c;
+        avatarRing.style.boxShadow = `0 0 20px ${c}66, 0 0 60px ${c}26, inset 0 0 30px ${c}0d`;
       }
 
       // Update start button text if AI provided custom text

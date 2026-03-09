@@ -71,7 +71,7 @@ class QuizScene extends Phaser.Scene {
     // Mystery mode: random theme each question
     let thema = this.settings.thema;
     if (this.settings.modifier === 'mystery') {
-      const themes = ['AI & Kunstmatige Intelligentie', 'Software Development & Programmeren', 'AI Tools zoals ChatGPT, Copilot en Midjourney', 'Game Development & Game Design', 'AR, VR en Mixed Reality', 'Cybersecurity & Ethical Hacking', 'Robotica & Automatisering', 'Data Science & Machine Learning', 'Cloud Computing & DevOps', 'Internet of Things & Smart Devices', 'Web Development & Apps', 'Blockchain & Crypto Technologie'];
+      const themes = ['AI & Kunstmatige Intelligentie', 'Game Development & Game Design', 'Software Development & Programmeren', 'Tech & ICT', 'Algemene Technologie'];
       thema = themes[Math.floor(Math.random() * themes.length)];
     }
 
@@ -106,10 +106,17 @@ class QuizScene extends Phaser.Scene {
       const answersDiv = document.getElementById('quiz-answers');
       answersDiv.innerHTML = '';
 
+      // Shuffle options so correct answer isn't always A/Waar
+      const correctAnswer = questionData.opties[questionData.correctIndex];
+      const shuffled = [...questionData.opties].sort(() => Math.random() - 0.5);
+      questionData.opties = shuffled;
+      questionData.correctIndex = shuffled.indexOf(correctAnswer);
+
+      const labels = ['A', 'B', 'C', 'D'];
       questionData.opties.forEach((optie, index) => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
-        btn.textContent = optie;
+        btn.innerHTML = `<span class="answer-label">${labels[index]}</span><span class="answer-text">${optie}</span>`;
         btn.onclick = () => this.handleAnswer(index, questionData);
         answersDiv.appendChild(btn);
       });

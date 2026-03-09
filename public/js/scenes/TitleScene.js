@@ -84,8 +84,8 @@ class TitleScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 0, color: '#00f0ff', blur: 30, fill: true },
     }).setOrigin(0.5).setAlpha(0).setScale(0.5);
 
-    // ── Title: "ROYALE" ──
-    this.titleRoyale = this.add.text(width / 2, centerY + titleSize * 0.9, 'ROYALE', {
+    // ── Title: ".EXE" ──
+    this.titleRoyale = this.add.text(width / 2, centerY + titleSize * 0.9, '.EXE', {
       fontFamily: '"Press Start 2P"',
       fontSize: titleSize + 'px',
       color: '#ff00aa',

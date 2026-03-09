@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuizRoyale — AI-Powered Quiz Game</title>
+  <title>Quiz.exe — AI Quiz Game</title>
 
   <!-- Fonts: Press Start 2P for pixel headings, Exo 2 for clean body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,21 +29,21 @@
         <div class="setup-section">
           <label class="setup-label">THEMA</label>
           <div class="theme-grid" id="theme-grid">
-            <button class="theme-btn selected" data-theme="AI & Kunstmatige Intelligentie">🤖 AI</button>
-            <button class="theme-btn" data-theme="Software Development & Programmeren">💻 Software Dev</button>
-            <button class="theme-btn" data-theme="AI Tools zoals ChatGPT, Copilot en Midjourney">🛠️ AI Tools</button>
-            <button class="theme-btn" data-theme="Game Development & Game Design">🎮 Game Dev</button>
-            <button class="theme-btn" data-theme="AR, VR en Mixed Reality">🥽 AR / VR</button>
-            <button class="theme-btn" data-theme="Cybersecurity & Ethical Hacking">🔒 Cyber Security</button>
-            <button class="theme-btn" data-theme="Robotica & Automatisering">🤖 Robotica</button>
-            <button class="theme-btn" data-theme="Data Science & Machine Learning">📊 Data Science</button>
-            <button class="theme-btn" data-theme="Cloud Computing & DevOps">☁️ Cloud & DevOps</button>
-            <button class="theme-btn" data-theme="Internet of Things & Smart Devices">📡 IoT</button>
-            <button class="theme-btn" data-theme="Web Development & Apps">🌐 Web Dev</button>
-            <button class="theme-btn" data-theme="Blockchain & Crypto Technologie">⛓️ Blockchain</button>
+            <button class="theme-btn selected theme-ai" data-theme="AI & Kunstmatige Intelligentie">🤖<br>Kunstmatige<br>Intelligentie</button>
+            <button class="theme-btn theme-game" data-theme="Game Development & Game Design">🎮<br>Game<br>Development</button>
+            <button class="theme-btn theme-sd" data-theme="Software Development & Programmeren">💻<br>Software<br>Development</button>
+            <button class="theme-btn theme-ict" data-theme="Tech & ICT">🖥️<br>Tech<br>& ICT</button>
+            <button class="theme-btn theme-tech" data-theme="Algemene Technologie">🌐<br>Algemene<br>Technologie</button>
           </div>
-          <div class="custom-theme-row">
-            <input type="text" id="custom-theme" class="neon-input" placeholder="Of typ je eigen thema..." maxlength="60">
+        </div>
+
+        <!-- Moeilijkheid -->
+        <div class="setup-section">
+          <label class="setup-label">NIVEAU</label>
+          <div class="difficulty-row">
+            <button class="diff-btn selected" data-diff="Chill">😎 MAKKELIJK</button>
+            <button class="diff-btn" data-diff="Normal">🔥 NORMAAL</button>
+            <button class="diff-btn" data-diff="Beast Mode">💀 MOEILIJK</button>
           </div>
         </div>
 
@@ -53,59 +53,13 @@
           <select id="style-select" class="neon-select">
             <option value="Game Streamer / YouTuber">🎬 Game Streamer</option>
             <option value="Rapper / Hiphopper">🎤 Rapper</option>
-            <option value="Piraat">🏴‍☠️ Piraat</option>
-            <option value="Boze gymleraar">😤 Boze Gymleraar</option>
             <option value="Gekke professor">🧪 Gekke Professor</option>
             <option value="Sportcommentator">📣 Sportcommentator</option>
-            <option value="Ridder uit de middeleeuwen">⚔️ Ridder</option>
-            <option value="Alien die net op aarde is geland">👽 Alien</option>
             <option value="Superheld">🦸 Superheld</option>
             <option value="TikTok influencer">📱 TikTok Influencer</option>
           </select>
         </div>
 
-        <!-- Moeilijkheid -->
-        <div class="setup-section">
-          <label class="setup-label">MOEILIJKHEID</label>
-          <div class="difficulty-row">
-            <button class="diff-btn selected" data-diff="Chill">😎 CHILL</button>
-            <button class="diff-btn" data-diff="Normal">🔥 NORMAL</button>
-            <button class="diff-btn" data-diff="Beast Mode">💀 BEAST</button>
-          </div>
-        </div>
-
-        <!-- Taal -->
-        <div class="setup-section">
-          <label class="setup-label">TAAL / VIBE</label>
-          <select id="language-select" class="neon-select">
-            <option value="Nederlands">🇳🇱 Nederlands</option>
-            <option value="Engels">🇬🇧 Engels</option>
-            <option value="Straattaal">🔥 Straattaal</option>
-            <option value="Overdreven deftig en formeel">🎩 Deftig</option>
-            <option value="Zoals een kleuter het zou zeggen">👶 Kleuter-taal</option>
-          </select>
-        </div>
-
-        <!-- Vraagtype -->
-        <div class="setup-section">
-          <label class="setup-label">VRAAGTYPE</label>
-          <div class="difficulty-row">
-            <button class="type-btn selected" data-type="Multiple Choice">📋 Multiple Choice</button>
-            <button class="type-btn" data-type="Waar of Niet Waar">✅ Waar/Niet Waar</button>
-            <button class="type-btn" data-type="Wie ben ik?">🎭 Wie Ben Ik?</button>
-          </div>
-        </div>
-
-        <!-- Game Modifier -->
-        <div class="setup-section">
-          <label class="setup-label">GAME MODIFIER</label>
-          <div class="difficulty-row">
-            <button class="mod-btn selected" data-mod="none">🎮 Normaal</button>
-            <button class="mod-btn" data-mod="speed">⚡ Speed Round</button>
-            <button class="mod-btn" data-mod="mystery">🎲 Mystery</button>
-            <button class="mod-btn" data-mod="boss">👑 Boss Vraag</button>
-          </div>
-        </div>
         <!-- Avatar beschrijving -->
         <div class="setup-section">
           <label class="setup-label">BESCHRIJF JE AVATAR</label>
@@ -135,8 +89,9 @@
   <div id="character-overlay" class="overlay hidden">
     <div class="character-panel">
       <div class="avatar-container" id="avatar-container">
-        <div class="character-emoji" id="char-emoji">🎮</div>
-        <canvas id="pixel-avatar" class="pixel-avatar" width="256" height="256"></canvas>
+        <div class="avatar-ring" id="avatar-ring">
+          <div class="character-emoji" id="char-emoji">🎮</div>
+        </div>
       </div>
       <h2 class="character-name glitch-text" id="char-name" data-text=""></h2>
       <p class="character-catchphrase" id="char-catchphrase"></p>

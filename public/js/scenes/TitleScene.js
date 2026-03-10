@@ -202,6 +202,10 @@ class TitleScene extends Phaser.Scene {
       fontFamily: '"Exo 2"', fontSize: '13px', color: '#4a4a7a',
     }).setOrigin(0.5).setAlpha(0.7);
 
+    this.add.text(width - 20, height - 22, 'v2.0', {
+      fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#2a2a5a',
+    }).setOrigin(1, 0.5);
+
     // ════════════════════════════════════════
     //  Entrance animations
     // ════════════════════════════════════════

@@ -18,9 +18,28 @@ class QuizScene extends Phaser.Scene {
     this.isLoading = false;
   }
 
+  _renderAvatar(containerId, size) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = '';
+    if (this.character.avatarImage) {
+      const img = document.createElement('img');
+      img.src = this.character.avatarImage;
+      img.className = 'char-avatar-img';
+      img.style.width = img.style.height = size + 'px';
+      el.appendChild(img);
+    } else {
+      el.textContent = this.character.emoji || '🎮';
+      el.style.fontSize = Math.round(size * 0.55) + 'px';
+    }
+  }
+
   create() {
     const overlay = document.getElementById('quiz-overlay');
     overlay.classList.remove('hidden');
+
+    // Render avatar in quiz char bar
+    this._renderAvatar('quiz-char-avatar', 64);
 
     // Set up next button handler
     document.getElementById('next-btn').onclick = () => {

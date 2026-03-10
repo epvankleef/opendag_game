@@ -3,7 +3,7 @@
 // Each game calls onComplete(bonusPoints) when done.
 // Max bonus: 500 points.
 
-const MINIGAME_DURATION = 30;
+const MINIGAME_DURATION = 60;
 
 // ─── PONG ────────────────────────────────────────────────────────────────────
 class PongGame {

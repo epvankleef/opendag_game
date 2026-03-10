@@ -29,11 +29,11 @@
         <div class="setup-section">
           <label class="setup-label">THEMA</label>
           <div class="theme-grid" id="theme-grid">
-            <button class="theme-btn selected theme-ai" data-theme="AI & Kunstmatige Intelligentie">🤖<br>Kunstmatige<br>Intelligentie</button>
-            <button class="theme-btn theme-game" data-theme="Game Development & Game Design">🎮<br>Game<br>Development</button>
-            <button class="theme-btn theme-sd" data-theme="Software Development & Programmeren">💻<br>Software<br>Development</button>
-            <button class="theme-btn theme-ict" data-theme="Tech & ICT">🖥️<br>Tech<br>& ICT</button>
-            <button class="theme-btn theme-tech" data-theme="Algemene Technologie">🌐<br>Algemene<br>Technologie</button>
+            <button class="theme-btn selected theme-ai" data-theme="AI & Kunstmatige Intelligentie" data-tooltip="Machine learning, ChatGPT, neurale netwerken & robotica">🤖<br>Kunstmatige<br>Intelligentie</button>
+            <button class="theme-btn theme-game" data-theme="Game Development & Game Design" data-tooltip="Unity, Unreal Engine, game design & de tech achter games">🎮<br>Game<br>Development</button>
+            <button class="theme-btn theme-sd" data-theme="Software Development & Programmeren" data-tooltip="Programmeren, algoritmen, databases & frameworks">💻<br>Software<br>Development</button>
+            <button class="theme-btn theme-ict" data-theme="Tech & ICT" data-tooltip="Hardware, netwerken, cybersecurity & besturingssystemen">🖥️<br>Tech<br>& ICT</button>
+            <button class="theme-btn theme-tech" data-theme="Algemene Technologie" data-tooltip="Gadgets, internet, innovaties & de digitale wereld">🌐<br>Algemene<br>Technologie</button>
           </div>
         </div>
 
@@ -41,33 +41,39 @@
         <div class="setup-section">
           <label class="setup-label">NIVEAU</label>
           <div class="difficulty-row">
-            <button class="diff-btn selected" data-diff="Chill">😎 MAKKELIJK</button>
-            <button class="diff-btn" data-diff="Normal">🔥 NORMAAL</button>
-            <button class="diff-btn" data-diff="Beast Mode">💀 MOEILIJK</button>
+            <button class="diff-btn selected" data-diff="Chill" data-tooltip="Makkelijke vragen · Score ×1 · Perfect om te beginnen">😎 MAKKELIJK</button>
+            <button class="diff-btn" data-diff="Normal" data-tooltip="Gemiddeld niveau · Score ×1.5 · Een echte uitdaging">🔥 NORMAAL</button>
+            <button class="diff-btn" data-diff="Beast Mode" data-tooltip="Zware vragen · Score ×2.5 · Alleen voor experts!">💀 MOEILIJK</button>
           </div>
         </div>
 
         <!-- Stijl -->
         <div class="setup-section">
           <label class="setup-label">QUIZMASTER STIJL</label>
-          <select id="style-select" class="neon-select">
-            <option value="Game Streamer / YouTuber">🎬 Game Streamer</option>
-            <option value="Rapper / Hiphopper">🎤 Rapper</option>
-            <option value="Gekke professor">🧪 Gekke Professor</option>
-            <option value="Sportcommentator">📣 Sportcommentator</option>
-            <option value="Superheld">🦸 Superheld</option>
-            <option value="TikTok influencer">📱 TikTok Influencer</option>
-          </select>
+          <div class="style-grid" id="style-grid">
+            <button class="style-btn selected" data-style="Game Streamer / YouTuber"
+              data-tooltip="Hype, memes en gaming-jargon — alsof je een live stream kijkt">🎬<br>Game<br>Streamer</button>
+            <button class="style-btn" data-style="Rapper / Hiphopper"
+              data-tooltip="Alles rijmt en gaat op beat — straight fire vragen">🎤<br>Rapper</button>
+            <button class="style-btn" data-style="Gekke professor"
+              data-tooltip="Explosieve experimenten en bizarre uitleg — totally unhinged">🧪<br>Gekke<br>Professor</button>
+            <button class="style-btn" data-style="Sportcommentator"
+              data-tooltip="Live verslag alsof het een finale is — spanning gegarandeerd">📣<br>Sport-<br>commentator</button>
+            <button class="style-btn" data-style="Superheld"
+              data-tooltip="Epische krachten en heldentaal — save the quiz, save the world">🦸<br>Superheld</button>
+            <button class="style-btn" data-style="TikTok influencer"
+              data-tooltip="Short attention span, trending vibes & non-stop energie">📱<br>TikTok<br>Influencer</button>
+          </div>
         </div>
 
         <!-- Speel modus -->
         <div class="setup-section">
           <label class="setup-label">SPEEL MODUS</label>
           <div class="difficulty-row modifier-row">
-            <button class="diff-btn modifier-btn selected" data-modifier="none">🎮 NORMAAL</button>
-            <button class="diff-btn modifier-btn" data-modifier="speed">⚡ SPEED ROUND</button>
-            <button class="diff-btn modifier-btn" data-modifier="mystery">🎲 MYSTERY</button>
-            <button class="diff-btn modifier-btn" data-modifier="boss">👑 BOSS VRAAG</button>
+            <button class="diff-btn modifier-btn selected" data-modifier="none" data-tooltip="Standaard quiz · 15 seconden per vraag">🎮 NORMAAL</button>
+            <button class="diff-btn modifier-btn" data-modifier="speed" data-tooltip="Slechts 7s per vraag! Meer punten als je snel antwoordt">⚡ SPEED ROUND</button>
+            <button class="diff-btn modifier-btn" data-modifier="mystery" data-tooltip="Elke vraag een ander thema — verrassing!">🎲 MYSTERY</button>
+            <button class="diff-btn modifier-btn" data-modifier="boss" data-tooltip="Laatste vraag = super moeilijk + 3× de punten">👑 BOSS VRAAG</button>
           </div>
         </div>
 
@@ -140,8 +146,11 @@
         <span class="timer-text" id="timer-text">15</span>
       </div>
 
-      <!-- Quizmaster intro -->
-      <div class="quiz-intro" id="quiz-intro"></div>
+      <!-- Quizmaster character bar -->
+      <div class="quiz-char-bar">
+        <div class="quiz-char-avatar" id="quiz-char-avatar"></div>
+        <div class="quiz-intro" id="quiz-intro"></div>
+      </div>
 
       <!-- Question -->
       <div class="quiz-question" id="quiz-question"></div>
@@ -193,6 +202,7 @@
   <div id="gameover-overlay" class="overlay hidden">
     <div class="gameover-panel">
       <h2 class="gameover-title glitch-text" data-text="GAME OVER">GAME OVER</h2>
+      <div class="gameover-avatar-wrap" id="gameover-avatar-wrap"></div>
       <div class="rank-badge" id="rank-badge">
         <span class="rank-icon" id="rank-icon">💎</span>
         <span class="rank-name" id="rank-name">DIAMOND</span>

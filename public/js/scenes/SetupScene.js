@@ -24,6 +24,9 @@ class SetupScene extends Phaser.Scene {
     // Modifier buttons
     this.setupButtonGroup('modifier-btn');
 
+    // Stijl buttons
+    this.setupButtonGroup('style-btn');
+
     // Start quiz button
     const startBtn = document.getElementById('start-quiz-btn');
     startBtn.onclick = () => {
@@ -46,7 +49,8 @@ class SetupScene extends Phaser.Scene {
     const selectedThemeBtn = document.querySelector('.theme-btn.selected');
     const thema = selectedThemeBtn ? selectedThemeBtn.dataset.theme : 'AI & Kunstmatige Intelligentie';
 
-    const stijl = document.getElementById('style-select').value;
+    const selectedStyleBtn = document.querySelector('.style-btn.selected');
+    const stijl = selectedStyleBtn ? selectedStyleBtn.dataset.style : 'Game Streamer / YouTuber';
 
     const diffBtn = document.querySelector('.diff-btn.selected');
     const moeilijkheid = diffBtn ? diffBtn.dataset.diff : 'Normal';

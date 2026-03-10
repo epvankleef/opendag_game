@@ -77,11 +77,34 @@ class LoadingScene extends Phaser.Scene {
       const charCatchphrase = document.getElementById('char-catchphrase');
       const charDesc = document.getElementById('char-desc');
 
-      charEmoji.textContent = character.emoji || '🎮';
+      // Show DALL-E image if available, otherwise emoji
+      const existingImg = document.getElementById('avatar-img');
+      if (existingImg) existingImg.remove();
+      if (character.avatarImage) {
+        const img = document.createElement('img');
+        img.id = 'avatar-img';
+        img.src = character.avatarImage;
+        img.alt = this.settings.avatarDesc || 'avatar';
+        charEmoji.style.display = 'none';
+        charEmoji.parentElement.insertBefore(img, charEmoji);
+      } else {
+        charEmoji.style.display = '';
+        charEmoji.textContent = character.emoji || '🎮';
+      }
       charName.textContent = character.naam || 'De Quizmaster';
       charName.dataset.text = character.naam || 'De Quizmaster';
       charCatchphrase.textContent = `"${character.catchphrase || 'Let the quiz begin!'}"`;
       charDesc.textContent = character.beschrijving || '';
+
+      // Show avatar description label if player typed one
+      const existingLabel = document.querySelector('.avatar-desc-label');
+      if (existingLabel) existingLabel.remove();
+      if (this.settings.avatarDesc) {
+        const label = document.createElement('p');
+        label.className = 'avatar-desc-label';
+        label.textContent = `jouw avatar: ${this.settings.avatarDesc}`;
+        document.getElementById('avatar-container').appendChild(label);
+      }
 
       // Style avatar ring with character's primary color
       const avatarRing = document.getElementById('avatar-ring');

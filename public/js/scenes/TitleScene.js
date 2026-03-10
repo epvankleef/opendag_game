@@ -70,7 +70,7 @@ class TitleScene extends Phaser.Scene {
       color: '#00f0ff',
       stroke: '#001520',
       strokeThickness: 10,
-      shadow: { offsetX: 0, offsetY: 0, color: '#00f0ff', blur: 45, fill: true },
+      shadow: { offsetX: 0, offsetY: 0, color: '#00f0ff', blur: 12, fill: true },
     }).setOrigin(0.5).setAlpha(0).setScale(0.5);
 
     const extY = titleY + titleSize * 1.02;
@@ -84,7 +84,7 @@ class TitleScene extends Phaser.Scene {
       color: '#ff00aa',
       stroke: '#1a0016',
       strokeThickness: 10,
-      shadow: { offsetX: 0, offsetY: 0, color: '#ff00aa', blur: 45, fill: true },
+      shadow: { offsetX: 0, offsetY: 0, color: '#ff00aa', blur: 12, fill: true },
     }).setOrigin(0.5).setAlpha(0).setScale(0.5);
 
     // ── Divider ──
@@ -131,6 +131,19 @@ class TitleScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 0, color: '#00f0ff', blur: 18, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
+    // ── AI Disclaimer ──
+    const disclaimerY = height * 0.895 + 36;
+    const disclaimer = this.add.text(cx, disclaimerY,
+      '🤖  Deze quiz is 100% gegenereerd door AI  •  Vragen, karakters & feedback zijn live aangemaakt  🤖', {
+      fontFamily: '"Exo 2"',
+      fontSize: '11px',
+      color: '#5a5a8a',
+      fontStyle: 'italic',
+      wordWrap: { width: Math.min(700, width * 0.8) },
+      align: 'center',
+    }).setOrigin(0.5).setAlpha(0);
+    this.tweens.add({ targets: disclaimer, alpha: 0.85, duration: 600, delay: 2200 });
+
     // ── Footer ──
     this.add.text(cx, height - 22, 'Powered by AI  •  Geen enkele vraag is vooraf geschreven', {
       fontFamily: '"Exo 2"', fontSize: '12px', color: '#3a3a6a',
@@ -164,8 +177,6 @@ class TitleScene extends Phaser.Scene {
       },
     });
 
-    // ── AI-generated title extensie ──
-    this._fetchGameTitle();
 
     // ── Click to start ──
     this.input.on('pointerdown', () => {
@@ -186,19 +197,31 @@ class TitleScene extends Phaser.Scene {
   async _fetchGameTitle() {
     try {
       const data = await API.getGameTitle();
-      if (!data.extensie || this.transitioning) return;
-      // Only swap the extension (.QUIZ → .EXE / .PY / etc.)
-      this.tweens.add({
-        targets: this.titleBot,
-        alpha: 0,
-        duration: 80,
-        onComplete: () => {
-          this.titleBot.setText(data.extensie);
-          this.tweens.add({ targets: this.titleBot, alpha: 1, duration: 200, ease: 'Quad.easeOut' });
-        },
-      });
+      if (this.transitioning) return;
+
+      // Swap top word (WEDOTECH → NEURAL / TURBO / etc.)
+      if (data.woord) {
+        this.tweens.add({
+          targets: this.titleTop, alpha: 0, duration: 80,
+          onComplete: () => {
+            this.titleTop.setText(data.woord);
+            this.tweens.add({ targets: this.titleTop, alpha: 1, duration: 200, ease: 'Quad.easeOut' });
+          },
+        });
+      }
+
+      // Swap extension (.QUIZ → .EXE / .QUEST / etc.)
+      if (data.extensie) {
+        this.tweens.add({
+          targets: this.titleBot, alpha: 0, duration: 80, delay: 60,
+          onComplete: () => {
+            this.titleBot.setText(data.extensie);
+            this.tweens.add({ targets: this.titleBot, alpha: 1, duration: 200, ease: 'Quad.easeOut' });
+          },
+        });
+      }
     } catch {
-      // Keep .QUIZ on error
+      // Keep defaults on error
     }
   }
 

@@ -223,6 +223,43 @@ html, body {
   text-shadow: var(--glow-secondary);
 }
 
+/* Style grid (quizmaster stijl) */
+.style-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.style-btn {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 0, 170, 0.2);
+  color: rgba(255,255,255,0.7);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 14px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.style-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 12%, transparent);
+  color: var(--secondary);
+}
+
+.style-btn.selected {
+  border-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 18%, transparent);
+  color: var(--secondary);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--secondary) 50%, transparent),
+              0 0 40px color-mix(in srgb, var(--secondary) 15%, transparent);
+}
+
 /* Theme grid */
 .theme-grid {
   display: grid;
@@ -335,6 +372,16 @@ html, body {
   color: var(--text);
 }
 
+.style-info {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--primary);
+  opacity: 0.75;
+  min-height: 20px;
+  transition: opacity 0.2s ease;
+}
+
 /* Difficulty & type buttons */
 .difficulty-row {
   display: flex;
@@ -343,6 +390,45 @@ html, body {
 
 .modifier-row {
   flex-wrap: wrap;
+}
+
+/* Tooltip op modifier knoppen */
+.modifier-btn {
+  position: relative;
+}
+
+/* Generieke tooltip voor elk element met data-tooltip */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0d0d2a;
+  border: 2px solid var(--primary);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: normal;
+  width: 210px;
+  text-align: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.5), 0 4px 20px rgba(0,0,0,0.7);
+  z-index: 9999;
+  line-height: 1.5;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
 }
 
 .diff-btn, .type-btn, .mod-btn {
@@ -509,8 +595,10 @@ html, body {
 }
 
 .character-emoji {
-  font-size: 72px;
-  margin-bottom: 16px;
+  font-size: 54px;
+  line-height: 1;
+  text-align: center;
+  word-break: break-all;
   animation: bounce 1s ease infinite;
 }
 
@@ -674,15 +762,73 @@ html, body {
   50% { opacity: 0.6; }
 }
 
-/* Quiz intro / question */
+/* Quiz character bar (avatar + intro) */
+.quiz-char-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.quiz-char-avatar {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+}
+
+.quiz-char-avatar .char-avatar-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border-radius: 50%;
+}
+
+/* Quiz intro — speech bubble */
 .quiz-intro {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: 15px;
   font-style: italic;
   color: var(--secondary);
-  text-align: center;
-  margin-bottom: 14px;
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 0, 170, 0.35);
+  border-radius: 12px 12px 12px 4px;
+  padding: 10px 14px;
+  position: relative;
   min-height: 24px;
+  line-height: 1.5;
+}
+
+/* Tail pointing left naar de avatar */
+.quiz-intro::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 8px 10px 8px 0;
+  border-style: solid;
+  border-color: transparent rgba(255, 0, 170, 0.35) transparent transparent;
+}
+
+.quiz-intro::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 7px 9px 7px 0;
+  border-style: solid;
+  border-color: transparent var(--bg-card) transparent transparent;
 }
 
 .quiz-question {
@@ -814,6 +960,10 @@ html, body {
   animation: feedbackIn 0.3s ease;
 }
 
+.quiz-feedback.hidden {
+  display: none;
+}
+
 @keyframes feedbackIn {
   from { transform: translateY(10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -883,9 +1033,30 @@ html, body {
 
 .gameover-title {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: var(--accent);
   text-shadow: var(--glow-accent);
+}
+
+/* Avatar op game over scherm */
+.gameover-avatar-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.gameover-avatar-wrap .char-avatar-img {
+  border-radius: 50%;
+  border: 3px solid var(--primary);
+  object-fit: cover;
+  image-rendering: pixelated;
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.5), 0 0 60px rgba(0, 240, 255, 0.15);
+  animation: ringPulse 2.5s ease-in-out infinite;
+}
+
+.gameover-avatar-wrap:not(:empty) {
+  font-size: 80px;
+  line-height: 1;
 }
 
 .rank-badge {
@@ -1166,9 +1337,22 @@ html, body {
   50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.6), 0 0 80px rgba(0, 240, 255, 0.25), inset 0 0 30px rgba(0, 240, 255, 0.08); }
 }
 
-.character-emoji {
-  font-size: 72px;
-  animation: bounce 1s ease infinite;
+#avatar-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.avatar-desc-label {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+  text-align: center;
+  max-width: 200px;
 }
 
 /* ============================================
@@ -1252,6 +1436,24 @@ html, body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lb-avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.lb-avatar-emoji {
+  font-size: 20px;
+  flex-shrink: 0;
 }
 
 .lb-theme {

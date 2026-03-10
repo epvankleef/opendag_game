@@ -63,6 +63,26 @@ async function callOpenAI(prompt) {
   return completion.choices[0].message.content;
 }
 
+async function generateAvatarImage(description) {
+  if (LLM_PROVIDER !== 'openai') return null;
+  try {
+    const OpenAI = require('openai');
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const safeDesc = sanitizeInput(description, 80);
+    const imagePrompt = `Pixel art character avatar: ${safeDesc}. Vibrant colors, retro 16-bit style, centered on dark background, simple and iconic, no text.`;
+    const response = await openai.images.generate({
+      model: 'dall-e-2',
+      prompt: imagePrompt,
+      n: 1,
+      size: '256x256',
+    });
+    return response.data[0].url;
+  } catch (err) {
+    console.error('DALL-E avatar error:', err.message);
+    return null;
+  }
+}
+
 // Gemini provider
 async function callGemini(prompt) {
   const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
@@ -180,8 +200,12 @@ app.post('/api/generate-character', async (req, res) => {
     }
 
     const avatarInstruction = avatarDesc
-      ? `De speler wil een avatar die lijkt op: "${avatarDesc}". Kies een passend emoji dat hierop lijkt als "emoji" veld.`
-      : `Kies een passend emoji voor het karakter.`;
+      ? `De speler wil een avatar die eruitziet als: "${avatarDesc}".
+Kies 2 tot 3 emoji's die SAMEN zo goed mogelijk op deze beschrijving lijken.
+Denk letterlijk: wat staat er beschreven? Kies emoji's die het uiterlijk, accessoires en sfeer weergeven.
+Voorbeelden: "robot met zonnebril" → "🤖😎", "draak met koptelefoon" → "🐉🎧", "ninja kat" → "🐱🥷"
+Geef de emoji's aaneengesloten terug als één string in het "emoji" veld.`
+      : `Kies 1 of 2 emoji's die passen bij het karakter en het thema, aaneengesloten als één string.`;
 
     const prompt = `${SYSTEM_PROMPT}
 
@@ -217,6 +241,12 @@ Antwoord in dit exacte JSON formaat:
 
     const text = await callLLM(prompt);
     const character = parseJSON(text);
+
+    // Generate avatar image with DALL-E if description given
+    if (avatarDesc) {
+      character.avatarImage = await generateAvatarImage(avatarDesc);
+    }
+
     res.json(character);
   } catch (error) {
     console.error('Error generating character:', error.message || error);
@@ -314,7 +344,7 @@ Antwoord in dit exacte JSON formaat:
 // POST /api/generate-gameover
 app.post('/api/generate-gameover', async (req, res) => {
   try {
-    let { score, maxScore, correctCount, totalQuestions, highestStreak, thema, stijl, karakterNaam, taal } = req.body;
+    let { score, correctCount, totalQuestions, highestStreak, thema, stijl, karakterNaam, taal } = req.body;
 
     const percentage = Math.round((correctCount / totalQuestions) * 100);
 
@@ -403,7 +433,8 @@ Antwoord in dit exacte JSON formaat:
 
 const Database = require('better-sqlite3');
 const path = require('path');
-const db = new Database(path.join(__dirname, 'highscores.db'));
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'highscores.db');
+const db = new Database(DB_PATH);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS highscores (
@@ -429,7 +460,7 @@ const insertScore = db.prepare(`
 
 const getTopScores = db.prepare(`SELECT * FROM highscores ORDER BY score DESC LIMIT 20`);
 
-app.get('/api/highscores', (req, res) => {
+app.get('/api/highscores', (_req, res) => {
   res.json(getTopScores.all());
 });
 
@@ -461,40 +492,28 @@ app.post('/api/highscores', (req, res) => {
 app.get('/api/game-title', async (_req, res) => {
   const prompt = `${SYSTEM_PROMPT}
 
-De quiz game heet "WEDOTECH" en heeft elke keer een andere grappige bestandsextensie.
+Verzin een grappig, uniek woord voor een AI-quizgame. Dit woord komt vóór ".QUIZ" te staan.
+De volledige naam wordt dus: "[WOORD].QUIZ"
 
-Verzin een grappige, tech-gerelateerde bestandsextensie voor de naam "WEDOTECH".
-Voorbeelden: .EXE, .PY, .JS, .DLL, .BAT, .AI, .JAR, .APK, .ROM, .BIN, .CPP, .JAVA
-Mag ook iets langer/grappiger: .CRASH, .NULL, .404, .LOOP, .SUDO, .REBOOT, .DEBUG
+Het woord moet cool, tech- of game-achtig klinken. Max 8 tekens. Geen punt. Alleen hoofdletters.
+Voorbeelden: NEURAL, CYBER, TURBO, MATRIX, PIXEL, SIGMA, GLITCH, OMEGA, NEON, NOVA, HYPER, ROGUE, DELTA, VOID, PRIME, BINARY, HACK, ULTRA
 
-Kies elke keer iets anders en verrassends. Altijd IN HOOFDLETTERS met punt ervoor.
+Kies ELKE KEER iets anders en verrassends.
 
 Antwoord in dit exacte JSON formaat:
 {
-  "extensie": ".EXE"
+  "woord": "NEURAL"
 }`;
 
   try {
     const text = await callLLM(prompt);
     const data = parseJSON(text);
-    const ext  = (data.extensie || '.QUIZ').toUpperCase().slice(0, 10);
-    res.json({ extensie: ext });
+    const woord = (data.woord || 'WEDOTECH').toUpperCase().slice(0, 8);
+    res.json({ woord, extensie: '.QUIZ' });
   } catch (err) {
     console.error('game-title error:', err.message);
-    const fallbacks = [
-      { extensie: '.EXE'    },
-      { extensie: '.PY'     },
-      { extensie: '.AI'     },
-      { extensie: '.DEBUG'  },
-      { extensie: '.CRASH'  },
-      { extensie: '.JS'     },
-      { extensie: '.NULL'   },
-      { extensie: '.REBOOT' },
-      // placeholder for old format below
-      { woord: 'NULL',     extensie: '.DLL' },
-    ];
-    const pick = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-    res.json(pick);
+    const woorden = ['NEURAL','CYBER','TURBO','MATRIX','PIXEL','BINARY','GLITCH','OMEGA','NEON','DELTA','NOVA','HYPER','ROGUE','SIGMA','VOID'];
+    res.json({ woord: woorden[Math.floor(Math.random() * woorden.length)], extensie: '.QUIZ' });
   }
 });
 

@@ -12,11 +12,30 @@ class GameOverScene extends Phaser.Scene {
     this.highestStreak = data.highestStreak;
   }
 
+  _renderAvatar(containerId, size) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = '';
+    if (this.character.avatarImage) {
+      const img = document.createElement('img');
+      img.src = this.character.avatarImage;
+      img.className = 'char-avatar-img';
+      img.style.width = img.style.height = size + 'px';
+      el.appendChild(img);
+    } else {
+      el.textContent = this.character.emoji || '🎮';
+      el.style.fontSize = Math.round(size * 0.55) + 'px';
+    }
+  }
+
   async create() {
     const overlay = document.getElementById('gameover-overlay');
     const percentage = Math.round((this.correctCount / this.totalQuestions) * 100);
     const rank = getRank(percentage);
     const rankData = RANKS[rank];
+
+    // Render avatar prominently
+    this._renderAvatar('gameover-avatar-wrap', 130);
 
     // Set rank badge
     document.getElementById('rank-icon').textContent = rankData.icon;
@@ -90,7 +109,7 @@ class GameOverScene extends Phaser.Scene {
         totalQuestions: this.totalQuestions,
         karakterNaam: this.character.naam || '',
         karakterEmoji: this.character.emoji || '🎮',
-        avatar: this.character.pixelAvatar ? JSON.stringify(this.character.pixelAvatar) : '',
+        avatar: this.character.avatarImage || '',
       });
 
       document.getElementById('highscore-submit').classList.add('hidden');
@@ -134,10 +153,12 @@ class GameOverScene extends Phaser.Scene {
         const row = document.createElement('div');
         row.className = 'leaderboard-row' + (i < 3 ? ' top-3' : '');
         const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
-        const emoji = entry.karakterEmoji || '🎮';
+        const avatarHtml = entry.avatar
+          ? `<img src="${entry.avatar}" class="lb-avatar-img" alt="avatar">`
+          : `<span class="lb-avatar-emoji">${entry.karakterEmoji || '🎮'}</span>`;
         row.innerHTML = `
           <span class="lb-rank">${medal}</span>
-          <span class="lb-name">${emoji} ${entry.naam}</span>
+          <span class="lb-name">${avatarHtml} ${entry.naam}</span>
           <span class="lb-theme">${entry.thema || ''}</span>
           <span class="lb-diff">${entry.moeilijkheid || ''}</span>
           <span class="lb-score">${entry.score}</span>

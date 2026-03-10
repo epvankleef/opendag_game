@@ -154,38 +154,21 @@ class TitleScene extends Phaser.Scene {
       });
     });
 
-    // ── Subtitle ──
-    this.subtitle = this.add.text(cx, divY + 30, 'Vragen, characters en feedback — alles live gegenereerd door AI', {
-      fontFamily: '"Exo 2"',
-      fontSize: '15px',
-      color: '#ffe600',
-      fontStyle: 'italic',
-      shadow: { offsetX: 0, offsetY: 0, color: '#ffe600', blur: 10, fill: true },
-    }).setOrigin(0.5).setAlpha(0);
+    // ── Info block (compact) ──
+    const infoY = divY + 34;
 
-    // ── AI Built Badge ──
-    const badgeY = divY + 80;
-    const badgeSize = Math.min(13, width / 60);
-    this.aiBadge = this.add.text(cx, badgeY, '100% GEBOUWD DOOR AI, ORCHESTRATED BY MR. VAN KLEEF', {
+    this.infoBadge = this.add.text(cx, infoY, '100% AI-BUILT  ×  ORCHESTRATED BY MR. VAN KLEEF', {
       fontFamily: '"Press Start 2P"',
-      fontSize: badgeSize + 'px',
+      fontSize: Math.min(11, width / 72) + 'px',
       color: '#00ff88',
-      shadow: { offsetX: 0, offsetY: 0, color: '#00ff88', blur: 16, fill: true },
+      shadow: { offsetX: 0, offsetY: 0, color: '#00ff88', blur: 18, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
-    this.aiBadgeSub = this.add.text(cx, badgeY + 34, 'Geen enkele vraag is vooraf geschreven', {
-      fontFamily: '"Exo 2"',
-      fontSize: '13px',
-      color: '#5a8a7a',
-      fontStyle: 'italic',
-    }).setOrigin(0.5).setAlpha(0);
-
-    // ── Opleiding ──
-    this.opleidingText = this.add.text(cx, badgeY + 66, 'MBO4 Software Developer — Applied AI', {
+    this.opleidingText = this.add.text(cx, infoY + 36, 'MBO4 SOFTWARE DEVELOPER — APPLIED AI', {
       fontFamily: '"Press Start 2P"',
-      fontSize: Math.min(10, width / 90) + 'px',
+      fontSize: Math.min(10, width / 85) + 'px',
       color: '#ff00aa',
-      shadow: { offsetX: 0, offsetY: 0, color: '#ff00aa', blur: 8, fill: true },
+      shadow: { offsetX: 0, offsetY: 0, color: '#ff00aa', blur: 10, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
     // ── CTA ──
@@ -212,11 +195,8 @@ class TitleScene extends Phaser.Scene {
     this.tweens.add({ targets: this.titleTop, alpha: 1, scaleX: 1, scaleY: 1, duration: 750, ease: 'Back.easeOut', delay: 150 });
     this.tweens.add({ targets: this.titleBot, alpha: 1, scaleX: 1, scaleY: 1, duration: 750, ease: 'Back.easeOut', delay: 400 });
     this.tweens.add({ targets: this.divGfx,   alpha: 1, duration: 400, delay: 820 });
-    this.tweens.add({ targets: this.subtitle, alpha: 1, duration: 500, delay: 950 });
-    this.tweens.add({ targets: this.aiBadge,    alpha: 1, duration: 500, delay: 1200 });
-
-    this.tweens.add({ targets: this.aiBadgeSub, alpha: 0.7, duration: 500, delay: 1380 });
-    this.tweens.add({ targets: this.opleidingText, alpha: 0.9, duration: 500, delay: 1550 });
+    this.tweens.add({ targets: this.infoBadge, alpha: 1, duration: 500, delay: 950 });
+    this.tweens.add({ targets: this.opleidingText, alpha: 0.9, duration: 500, delay: 1150 });
     this.tweens.add({ targets: this.startText, alpha: 1, duration: 500, delay: 1600 });
 
     this.time.addEvent({ delay: 600, callback: () => { this.particlesActive = true; } });
@@ -242,7 +222,7 @@ class TitleScene extends Phaser.Scene {
       this.divScanActive = false;
       this.cameras.main.flash(200, 0, 240, 255, true);
       this.tweens.add({
-        targets: [this.titleTop, this.titleBot, this.subtitle, this.startText, this.aiBadge, this.aiBadgeSub, this.opleidingText, this.divGfx, this.divPulse, this.divPulseGlow, this.divPulseHalo, this.divScanGfx, ...this.divDots],
+        targets: [this.titleTop, this.titleBot, this.infoBadge, this.opleidingText, this.startText, this.divGfx, this.divPulse, this.divPulseGlow, this.divPulseHalo, this.divScanGfx, ...this.divDots],
         alpha: 0, duration: 350, ease: 'Quad.easeIn',
       });
       this.cameras.main.fadeOut(480, 10, 10, 26);

@@ -341,6 +341,10 @@ html, body {
   gap: 8px;
 }
 
+.modifier-row {
+  flex-wrap: wrap;
+}
+
 .diff-btn, .type-btn, .mod-btn {
   flex: 1;
   background: var(--bg-card);

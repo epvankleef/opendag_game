@@ -21,6 +21,9 @@ class SetupScene extends Phaser.Scene {
     // Difficulty buttons
     this.setupButtonGroup('diff-btn');
 
+    // Modifier buttons
+    this.setupButtonGroup('modifier-btn');
+
     // Start quiz button
     const startBtn = document.getElementById('start-quiz-btn');
     startBtn.onclick = () => {
@@ -56,7 +59,7 @@ class SetupScene extends Phaser.Scene {
       taal: 'Nederlands',
       moeilijkheid,
       vraagType: 'Multiple Choice',
-      modifier: 'none',
+      modifier: (document.querySelector('.modifier-btn.selected') || {}).dataset?.modifier || 'none',
       avatarDesc,
     };
   }

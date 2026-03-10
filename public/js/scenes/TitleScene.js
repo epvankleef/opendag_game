@@ -155,30 +155,27 @@ class TitleScene extends Phaser.Scene {
     });
 
     // ── Subtitle ──
-    const subSize = Math.min(14, width / 55);
-    this.subtitle = this.add.text(cx, divY + 30, '⚡  AI-POWERED QUIZ GAME  ⚡', {
-      fontFamily: '"Press Start 2P"',
-      fontSize: subSize + 'px',
+    this.subtitle = this.add.text(cx, divY + 30, 'Vragen, characters en feedback — alles live gegenereerd door AI', {
+      fontFamily: '"Exo 2"',
+      fontSize: '15px',
       color: '#ffe600',
-      shadow: { offsetX: 0, offsetY: 0, color: '#ffe600', blur: 14, fill: true },
+      fontStyle: 'italic',
+      shadow: { offsetX: 0, offsetY: 0, color: '#ffe600', blur: 10, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
     // ── AI Built Badge ──
     const badgeY = divY + 80;
     const badgeSize = Math.min(13, width / 60);
-    this.aiBadge = this.add.text(cx, badgeY, '🤖  100% GEBOUWD DOOR AI, ORCHESTRATED BY MR. VAN KLEEF  🤖', {
+    this.aiBadge = this.add.text(cx, badgeY, '100% GEBOUWD DOOR AI, ORCHESTRATED BY MR. VAN KLEEF', {
       fontFamily: '"Press Start 2P"',
       fontSize: badgeSize + 'px',
       color: '#00ff88',
       shadow: { offsetX: 0, offsetY: 0, color: '#00ff88', blur: 16, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
-    // ── Pixel art Mr. Van Kleef avatar ──
-    this.mrAvatar = this.createMrVanKleefAvatar(cx + this.aiBadge.width / 2 + 22, badgeY);
-
-    this.aiBadgeSub = this.add.text(cx, badgeY + 34, 'Vragen • Characters • Feedback — live gegenereerd door Claude AI + OpenAI', {
+    this.aiBadgeSub = this.add.text(cx, badgeY + 34, 'Geen enkele vraag is vooraf geschreven', {
       fontFamily: '"Exo 2"',
-      fontSize: '14px',
+      fontSize: '13px',
       color: '#5a8a7a',
       fontStyle: 'italic',
     }).setOrigin(0.5).setAlpha(0);
@@ -201,7 +198,7 @@ class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5).setAlpha(0);
 
     // ── Footer ──
-    this.add.text(cx, height - 22, 'Powered by Claude AI + OpenAI  •  Geen enkele vraag is vooraf geschreven', {
+    this.footerText = this.add.text(cx, height - 22, 'Powered by Claude AI + OpenAI', {
       fontFamily: '"Exo 2"', fontSize: '13px', color: '#4a4a7a',
     }).setOrigin(0.5).setAlpha(0.7);
 
@@ -217,7 +214,7 @@ class TitleScene extends Phaser.Scene {
     this.tweens.add({ targets: this.divGfx,   alpha: 1, duration: 400, delay: 820 });
     this.tweens.add({ targets: this.subtitle, alpha: 1, duration: 500, delay: 950 });
     this.tweens.add({ targets: this.aiBadge,    alpha: 1, duration: 500, delay: 1200 });
-    this.tweens.add({ targets: this.mrAvatar,   alpha: 1, duration: 500, delay: 1200 });
+
     this.tweens.add({ targets: this.aiBadgeSub, alpha: 0.7, duration: 500, delay: 1380 });
     this.tweens.add({ targets: this.opleidingText, alpha: 0.9, duration: 500, delay: 1550 });
     this.tweens.add({ targets: this.startText, alpha: 1, duration: 500, delay: 1600 });
@@ -245,7 +242,7 @@ class TitleScene extends Phaser.Scene {
       this.divScanActive = false;
       this.cameras.main.flash(200, 0, 240, 255, true);
       this.tweens.add({
-        targets: [this.titleTop, this.titleBot, this.subtitle, this.startText, this.aiBadge, this.mrAvatar, this.aiBadgeSub, this.opleidingText, this.divGfx, this.divPulse, this.divPulseGlow, this.divPulseHalo, this.divScanGfx, ...this.divDots],
+        targets: [this.titleTop, this.titleBot, this.subtitle, this.startText, this.aiBadge, this.aiBadgeSub, this.opleidingText, this.divGfx, this.divPulse, this.divPulseGlow, this.divPulseHalo, this.divScanGfx, ...this.divDots],
         alpha: 0, duration: 350, ease: 'Quad.easeIn',
       });
       this.cameras.main.fadeOut(480, 10, 10, 26);
@@ -323,52 +320,6 @@ class TitleScene extends Phaser.Scene {
     });
     gfx.fillStyle(0x00f0ff, 0.1);
     nodes.forEach(n => { if (Math.random() > 0.6) gfx.fillCircle(n.x, n.y, 2); });
-  }
-
-  createMrVanKleefAvatar(x, y) {
-    // 10x12 pixel art: red hair, skin, sunglasses, smile
-    const px = 2; // pixel size
-    const colors = {
-      _: null,        // transparent
-      r: 0xcc2200,    // red hair
-      R: 0xff3311,    // red hair highlight
-      s: 0xf5c5a3,    // skin
-      S: 0xe8b090,    // skin shadow
-      g: 0x111111,    // sunglasses frame
-      G: 0x1a1a3a,    // sunglasses lens
-      m: 0xcc3333,    // mouth
-      t: 0x222244,    // shirt
-    };
-    // prettier-ignore
-    const pixels = [
-      '___rRRr___',
-      '__rRRRRr__',
-      '_rRRRRRRr_',
-      '_rrRRRRrr_',
-      '_sssssssss_',
-      '_sgGgssgGs_',
-      '_sgGgssgGs_',
-      '_ssssSssss_',
-      '__ssmmsss__',
-      '__Sssssss__',
-      '___ttttt___',
-      '___ttttt___',
-    ];
-    const w = pixels[0].length;
-    const h = pixels.length;
-    const gfx = this.add.graphics();
-    pixels.forEach((row, ry) => {
-      for (let rx = 0; rx < row.length; rx++) {
-        const c = colors[row[rx]];
-        if (c === null || c === undefined) continue;
-        gfx.fillStyle(c, 1);
-        gfx.fillRect(rx * px, ry * px, px, px);
-      }
-    });
-    gfx.setPosition(x - (w * px) / 2, y - (h * px) / 2);
-    gfx.setAlpha(0);
-    gfx.setScale(1.2);
-    return gfx;
   }
 
   createGlowOrb(x, y, r, color, alpha) {

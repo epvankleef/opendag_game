@@ -1026,8 +1026,8 @@ html, body {
   border: 2px solid var(--accent);
   box-shadow: var(--glow-accent);
   border-radius: 4px;
-  max-width: 640px;
-  width: 90%;
+  max-width: 900px;
+  width: 95%;
   animation: characterReveal 0.5s ease-out;
 }
 

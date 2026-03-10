@@ -60,11 +60,11 @@ class TitleScene extends Phaser.Scene {
     const titleY = height * 0.30;
 
     // Drop shadow layers
-    this.add.text(cx + 6, titleY + 6, 'NEURAL', {
+    this.add.text(cx + 6, titleY + 6, 'AI QUIZ', {
       fontFamily: '"Press Start 2P"', fontSize: titleSize + 'px', color: '#001a2e',
     }).setOrigin(0.5).setAlpha(0.5);
 
-    this.titleTop = this.add.text(cx, titleY, 'NEURAL', {
+    this.titleTop = this.add.text(cx, titleY, 'AI QUIZ', {
       fontFamily: '"Press Start 2P"',
       fontSize: titleSize + 'px',
       color: '#00f0ff',
@@ -74,11 +74,11 @@ class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5).setAlpha(0).setScale(0.5);
 
     const extY = titleY + titleSize * 1.02;
-    this.add.text(cx + 6, extY + 6, 'ARENA', {
+    this.add.text(cx + 6, extY + 6, 'ROYALE', {
       fontFamily: '"Press Start 2P"', fontSize: titleSize + 'px', color: '#2a0020',
     }).setOrigin(0.5).setAlpha(0.5);
 
-    this.titleBot = this.add.text(cx, extY, 'ARENA', {
+    this.titleBot = this.add.text(cx, extY, 'ROYALE', {
       fontFamily: '"Press Start 2P"',
       fontSize: titleSize + 'px',
       color: '#ff00aa',

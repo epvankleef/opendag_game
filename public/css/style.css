@@ -1026,7 +1026,7 @@ html, body {
   border: 2px solid var(--accent);
   box-shadow: var(--glow-accent);
   border-radius: 4px;
-  max-width: 520px;
+  max-width: 640px;
   width: 90%;
   animation: characterReveal 0.5s ease-out;
 }
@@ -1609,4 +1609,71 @@ html, body {
 @keyframes pop-in {
   from { transform: scale(0.7); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ============================================
+   How it's made
+   ============================================ */
+
+.how-its-made {
+  margin-top: 28px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(255, 0, 170, 0.05));
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.how-its-made-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--primary);
+  margin: 0 0 16px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+
+.how-its-made-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+.how-its-made-text strong {
+  color: var(--primary);
+}
+
+.how-its-made-text em {
+  color: var(--secondary);
+  font-style: italic;
+}
+
+.how-its-made-stack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.tech-tag {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--text);
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 8px;
+  padding: 8px 16px;
+  letter-spacing: 1px;
+}
+
+.how-its-made-cta {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--accent);
+  font-weight: 700;
+  margin: 18px 0 0;
+  line-height: 1.5;
 }

@@ -60,11 +60,11 @@ class TitleScene extends Phaser.Scene {
     const titleY = height * 0.30;
 
     // Drop shadow layers
-    this.add.text(cx + 6, titleY + 6, 'WEDOTECH', {
+    this.add.text(cx + 6, titleY + 6, 'NEURAL', {
       fontFamily: '"Press Start 2P"', fontSize: titleSize + 'px', color: '#001a2e',
     }).setOrigin(0.5).setAlpha(0.5);
 
-    this.titleTop = this.add.text(cx, titleY, 'WEDOTECH', {
+    this.titleTop = this.add.text(cx, titleY, 'NEURAL', {
       fontFamily: '"Press Start 2P"',
       fontSize: titleSize + 'px',
       color: '#00f0ff',
@@ -74,11 +74,11 @@ class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5).setAlpha(0).setScale(0.5);
 
     const extY = titleY + titleSize * 1.02;
-    this.add.text(cx + 6, extY + 6, '.QUIZ', {
+    this.add.text(cx + 6, extY + 6, 'ARENA', {
       fontFamily: '"Press Start 2P"', fontSize: titleSize + 'px', color: '#2a0020',
     }).setOrigin(0.5).setAlpha(0.5);
 
-    this.titleBot = this.add.text(cx, extY, '.QUIZ', {
+    this.titleBot = this.add.text(cx, extY, 'ARENA', {
       fontFamily: '"Press Start 2P"',
       fontSize: titleSize + 'px',
       color: '#ff00aa',
@@ -87,14 +87,72 @@ class TitleScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 0, color: '#ff00aa', blur: 12, fill: true },
     }).setOrigin(0.5).setAlpha(0).setScale(0.5);
 
-    // ── Divider ──
+    // ── Animated Divider ──
     const divY = extY + titleSize * 1.06;
     const divW = Math.min(380, width * 0.48);
+    this.divY = divY;
+    this.divW = divW;
+    this.divCx = cx;
+
+    // Base line (subtle)
     this.divGfx = this.add.graphics().setAlpha(0);
-    this.divGfx.lineStyle(1, 0xffe600, 0.65);
+    this.divGfx.lineStyle(1, 0xffe600, 0.3);
     this.divGfx.lineBetween(cx - divW/2, divY, cx + divW/2, divY);
-    this.divGfx.fillStyle(0xffe600, 1);
-    [-divW/2, 0, divW/2].forEach(dx => this.divGfx.fillCircle(cx + dx, divY, 3));
+
+    // Node dots that pulse
+    this.divDots = [];
+    [-divW/2, -divW/4, 0, divW/4, divW/2].forEach((dx, i) => {
+      const dot = this.add.circle(cx + dx, divY, 3, 0xffe600, 0).setAlpha(0);
+      this.divDots.push(dot);
+      // Staggered pulse
+      this.tweens.add({
+        targets: dot, scaleX: 1.8, scaleY: 1.8, alpha: 0.4,
+        duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+        delay: 820 + i * 150,
+      });
+    });
+
+    // Scanning energy pulse (bright core + outer glow + halo)
+    this.divPulseHalo = this.add.circle(cx - divW/2, divY, 40, 0xffe600, 0);
+    this.divPulseGlow = this.add.circle(cx - divW/2, divY, 20, 0xffe600, 0);
+    this.divPulse = this.add.circle(cx - divW/2, divY, 8, 0xffffff, 0);
+    // Bright line overlay drawn each frame
+    this.divScanGfx = this.add.graphics().setAlpha(0);
+
+    // Start scan animation after entrance
+    this.time.delayedCall(1200, () => {
+      this.divScanActive = true;
+      // Pulse travels back and forth
+      this.tweens.add({
+        targets: [this.divPulse, this.divPulseGlow, this.divPulseHalo],
+        x: cx + divW/2, duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+      this.tweens.add({
+        targets: this.divPulse, alpha: 1,
+        duration: 400,
+      });
+      this.tweens.add({
+        targets: this.divPulseGlow, alpha: 0.25,
+        duration: 400,
+      });
+      this.tweens.add({
+        targets: this.divPulseHalo, alpha: 0.08,
+        duration: 400,
+      });
+      // Pulse breathing
+      this.tweens.add({
+        targets: this.divPulse, scaleX: 1.4, scaleY: 1.4,
+        duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+      this.tweens.add({
+        targets: this.divPulseGlow, scaleX: 1.3, scaleY: 1.3,
+        duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+      this.tweens.add({
+        targets: this.divScanGfx, alpha: 1,
+        duration: 400, delay: 0,
+      });
+    });
 
     // ── Subtitle ──
     const subSize = Math.min(14, width / 55);
@@ -105,21 +163,29 @@ class TitleScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 0, color: '#ffe600', blur: 14, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
-    // ── WeDoTechProjects ──
-    const wdtpY = divY + 86;
-    this.wdtp = this.add.text(cx, wdtpY, 'WeDoTechProjects', {
+    // ── AI Built Badge ──
+    const badgeY = divY + 80;
+    const badgeSize = Math.min(13, width / 60);
+    this.aiBadge = this.add.text(cx, badgeY, '🤖  100% GEBOUWD DOOR AI  🤖', {
       fontFamily: '"Press Start 2P"',
-      fontSize: Math.min(13, width / 72) + 'px',
-      color: '#00f0ff',
-      shadow: { offsetX: 0, offsetY: 0, color: '#00f0ff', blur: 10, fill: true },
+      fontSize: badgeSize + 'px',
+      color: '#00ff88',
+      shadow: { offsetX: 0, offsetY: 0, color: '#00ff88', blur: 16, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
-    // ── MBO4 badge ──
-    this.badge = this.add.text(cx, wdtpY + 32, 'MBO4 Software Developer — Applied AI', {
+    this.aiBadgeSub = this.add.text(cx, badgeY + 34, 'Vragen • Characters • Feedback — alles live gegenereerd', {
       fontFamily: '"Exo 2"',
-      fontSize: '15px',
-      color: '#5a5a9a',
-      fontStyle: 'bold',
+      fontSize: '14px',
+      color: '#5a8a7a',
+      fontStyle: 'italic',
+    }).setOrigin(0.5).setAlpha(0);
+
+    // ── Opleiding ──
+    this.opleidingText = this.add.text(cx, badgeY + 66, 'MBO4 Software Developer — Applied AI', {
+      fontFamily: '"Press Start 2P"',
+      fontSize: Math.min(10, width / 90) + 'px',
+      color: '#ff00aa',
+      shadow: { offsetX: 0, offsetY: 0, color: '#ff00aa', blur: 8, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
     // ── CTA ──
@@ -131,27 +197,10 @@ class TitleScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 0, color: '#00f0ff', blur: 18, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
-    // ── AI Disclaimer ──
-    const disclaimerY = height * 0.895 + 36;
-    const disclaimer = this.add.text(cx, disclaimerY,
-      '🤖  Deze quiz is 100% gegenereerd door AI  •  Vragen, karakters & feedback zijn live aangemaakt  🤖', {
-      fontFamily: '"Exo 2"',
-      fontSize: '11px',
-      color: '#5a5a8a',
-      fontStyle: 'italic',
-      wordWrap: { width: Math.min(700, width * 0.8) },
-      align: 'center',
-    }).setOrigin(0.5).setAlpha(0);
-    this.tweens.add({ targets: disclaimer, alpha: 0.85, duration: 600, delay: 2200 });
-
     // ── Footer ──
-    this.add.text(cx, height - 22, 'Powered by AI  •  Geen enkele vraag is vooraf geschreven', {
-      fontFamily: '"Exo 2"', fontSize: '12px', color: '#3a3a6a',
-    }).setOrigin(0.5).setAlpha(0.55);
-
-    this.add.text(width - 28, height - 22, 'v1.1', {
-      fontFamily: '"Press Start 2P"', fontSize: '7px', color: '#2a2a5a',
-    }).setOrigin(1, 0.5);
+    this.add.text(cx, height - 22, 'Powered by Claude AI + OpenAI  •  Geen enkele vraag is vooraf geschreven', {
+      fontFamily: '"Exo 2"', fontSize: '13px', color: '#4a4a7a',
+    }).setOrigin(0.5).setAlpha(0.7);
 
     // ════════════════════════════════════════
     //  Entrance animations
@@ -160,8 +209,9 @@ class TitleScene extends Phaser.Scene {
     this.tweens.add({ targets: this.titleBot, alpha: 1, scaleX: 1, scaleY: 1, duration: 750, ease: 'Back.easeOut', delay: 400 });
     this.tweens.add({ targets: this.divGfx,   alpha: 1, duration: 400, delay: 820 });
     this.tweens.add({ targets: this.subtitle, alpha: 1, duration: 500, delay: 950 });
-    this.tweens.add({ targets: this.wdtp,     alpha: 1, duration: 500, delay: 1200 });
-    this.tweens.add({ targets: this.badge,    alpha: 0.65, duration: 500, delay: 1380 });
+    this.tweens.add({ targets: this.aiBadge,    alpha: 1, duration: 500, delay: 1200 });
+    this.tweens.add({ targets: this.aiBadgeSub, alpha: 0.7, duration: 500, delay: 1380 });
+    this.tweens.add({ targets: this.opleidingText, alpha: 0.9, duration: 500, delay: 1550 });
     this.tweens.add({ targets: this.startText, alpha: 1, duration: 500, delay: 1600 });
 
     this.time.addEvent({ delay: 600, callback: () => { this.particlesActive = true; } });
@@ -182,9 +232,10 @@ class TitleScene extends Phaser.Scene {
     this.input.on('pointerdown', () => {
       if (this.transitioning) return;
       this.transitioning = true;
+      this.divScanActive = false;
       this.cameras.main.flash(200, 0, 240, 255, true);
       this.tweens.add({
-        targets: [this.titleTop, this.titleBot, this.subtitle, this.startText, this.wdtp, this.badge, this.divGfx],
+        targets: [this.titleTop, this.titleBot, this.subtitle, this.startText, this.aiBadge, this.aiBadgeSub, this.opleidingText, this.divGfx, this.divPulse, this.divPulseGlow, this.divPulseHalo, this.divScanGfx, ...this.divDots],
         alpha: 0, duration: 350, ease: 'Quad.easeIn',
       });
       this.cameras.main.fadeOut(480, 10, 10, 26);
@@ -282,5 +333,47 @@ class TitleScene extends Phaser.Scene {
       if (p.obj.x < -20)       p.obj.x = width  + 10;
       if (p.obj.x > width + 20) p.obj.x = -10;
     });
+
+    // Draw energy trail behind scan pulse
+    if (this.divScanActive && this.divPulse) {
+      const g = this.divScanGfx;
+      g.clear();
+      const px = this.divPulse.x;
+      const y = this.divY;
+      const left = this.divCx - this.divW / 2;
+      const right = this.divCx + this.divW / 2;
+
+      // Wide glow layer (subtle)
+      g.lineStyle(6, 0xffe600, 0.08);
+      g.lineBetween(left, y, right, y);
+
+      // Hot zone around pulse
+      const hotLen = 120;
+      const hStart = Math.max(left, px - hotLen);
+      const hEnd = Math.min(right, px + hotLen);
+      g.lineStyle(4, 0xffe600, 0.35);
+      g.lineBetween(hStart, y, hEnd, y);
+
+      // Core bright line near pulse
+      const coreLen = 50;
+      const cStart = Math.max(left, px - coreLen);
+      const cEnd = Math.min(right, px + coreLen);
+      g.lineStyle(2, 0xffffff, 0.6);
+      g.lineBetween(cStart, y, cEnd, y);
+
+      // Dim rest of line
+      g.lineStyle(1, 0xffe600, 0.15);
+      g.lineBetween(left, y, hStart, y);
+      g.lineBetween(hEnd, y, right, y);
+
+      // Make dots near the pulse glow brighter
+      this.divDots.forEach(dot => {
+        const dist = Math.abs(dot.x - px);
+        const boost = Math.max(0, 1 - dist / 120);
+        dot.setScale(1 + boost * 1.6);
+        dot.fillColor = boost > 0.5 ? 0xffffff : boost > 0.2 ? 0xffe600 : 0xffe600;
+        dot.setAlpha(0.3 + boost * 0.7);
+      });
+    }
   }
 }

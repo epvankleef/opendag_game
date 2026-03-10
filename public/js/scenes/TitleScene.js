@@ -164,6 +164,9 @@ class TitleScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 0, color: '#00ff88', blur: 18, fill: true },
     }).setOrigin(0.5).setAlpha(0);
 
+    // Pixel art Mr. Van Kleef (randomised each load, red hair always)
+    this.mrAvatar = this._buildMrAvatar(cx + this.infoBadge.width / 2 + 20, infoY);
+
     this.opleidingText = this.add.text(cx, infoY + 36, 'MBO4 SOFTWARE DEVELOPER — APPLIED AI', {
       fontFamily: '"Press Start 2P"',
       fontSize: Math.min(10, width / 85) + 'px',
@@ -196,6 +199,7 @@ class TitleScene extends Phaser.Scene {
     this.tweens.add({ targets: this.titleBot, alpha: 1, scaleX: 1, scaleY: 1, duration: 750, ease: 'Back.easeOut', delay: 400 });
     this.tweens.add({ targets: this.divGfx,   alpha: 1, duration: 400, delay: 820 });
     this.tweens.add({ targets: this.infoBadge, alpha: 1, duration: 500, delay: 950 });
+    this.tweens.add({ targets: this.mrAvatar, alpha: 1, duration: 500, delay: 950 });
     this.tweens.add({ targets: this.opleidingText, alpha: 0.9, duration: 500, delay: 1150 });
     this.tweens.add({ targets: this.startText, alpha: 1, duration: 500, delay: 1600 });
 
@@ -222,7 +226,7 @@ class TitleScene extends Phaser.Scene {
       this.divScanActive = false;
       this.cameras.main.flash(200, 0, 240, 255, true);
       this.tweens.add({
-        targets: [this.titleTop, this.titleBot, this.infoBadge, this.opleidingText, this.startText, this.divGfx, this.divPulse, this.divPulseGlow, this.divPulseHalo, this.divScanGfx, ...this.divDots],
+        targets: [this.titleTop, this.titleBot, this.infoBadge, this.mrAvatar, this.opleidingText, this.startText, this.divGfx, this.divPulse, this.divPulseGlow, this.divPulseHalo, this.divScanGfx, ...this.divDots],
         alpha: 0, duration: 350, ease: 'Quad.easeIn',
       });
       this.cameras.main.fadeOut(480, 10, 10, 26);
@@ -300,6 +304,90 @@ class TitleScene extends Phaser.Scene {
     });
     gfx.fillStyle(0x00f0ff, 0.1);
     nodes.forEach(n => { if (Math.random() > 0.6) gfx.fillCircle(n.x, n.y, 2); });
+  }
+
+  _buildMrAvatar(x, y) {
+    const px = 2;
+    const pick = (arr) => arr[Phaser.Math.Between(0, arr.length - 1)];
+
+    // Always red hair, but shade varies
+    const hairMain  = pick([0xcc2200, 0xdd2200, 0xbb1a00, 0xd43000]);
+    const hairLight = pick([0xff3311, 0xff4422, 0xee3300, 0xff5533]);
+
+    // Sunglasses lens color varies
+    const lens = pick([0x1a1a3a, 0x002244, 0x220033, 0x003322, 0x331100]);
+    const frame = 0x111111;
+
+    // Skin consistent
+    const skin = 0xf5c5a3;
+    const skinS = 0xe8b090;
+
+    // Shirt color varies
+    const shirt = pick([0x222244, 0x224422, 0x442222, 0x113344, 0x332244, 0x443311]);
+
+    // Mouth varies
+    const mouth = pick([0xcc3333, 0xdd4444, 0xbb2222]);
+
+    // Random accessory: sometimes earring, sometimes nothing
+    const hasEarring = Math.random() > 0.6;
+    const earring = pick([0xffe600, 0x00f0ff, 0xff00aa]);
+
+    // Random hair style variation
+    const hairStyle = Phaser.Math.Between(0, 3);
+
+    const r = hairMain, R = hairLight, s = skin, S = skinS;
+    const g = frame, G = lens, m = mouth, t = shirt;
+    const _ = null;
+
+    // Base face (11 wide x 12 tall)
+    const grid = [
+      [_,_,_,r,R,R,r,_,_,_,_],
+      [_,_,r,R,R,R,R,r,_,_,_],
+      [_,r,R,R,R,R,R,R,r,_,_],
+      [_,r,r,R,R,R,R,r,r,_,_],
+      [_,s,s,s,s,s,s,s,s,_,_],
+      [_,s,g,G,g,s,g,G,g,s,_],
+      [_,s,g,G,g,s,g,G,g,s,_],
+      [_,s,s,s,s,S,s,s,s,_,_],
+      [_,_,s,s,m,m,s,s,_,_,_],
+      [_,_,S,s,s,s,s,S,_,_,_],
+      [_,_,_,t,t,t,t,t,_,_,_],
+      [_,_,_,t,t,t,t,t,_,_,_],
+    ];
+
+    // Hair variations
+    if (hairStyle === 1) {
+      // Spiky top
+      grid[0] = [_,_,R,r,R,R,r,R,_,_,_];
+    } else if (hairStyle === 2) {
+      // Wider hair
+      grid[0] = [_,_,r,R,R,R,R,r,_,_,_];
+      grid[1] = [_,r,R,R,R,R,R,R,r,_,_];
+    } else if (hairStyle === 3) {
+      // Messy fringe
+      grid[0] = [_,_,R,r,R,r,R,r,_,_,_];
+    }
+
+    // Earring
+    if (hasEarring) {
+      grid[6][9] = earring;
+    }
+
+    const w = grid[0].length;
+    const h = grid.length;
+    const gfx = this.add.graphics();
+    for (let ry = 0; ry < h; ry++) {
+      for (let rx = 0; rx < w; rx++) {
+        const c = grid[ry][rx];
+        if (c === null) continue;
+        gfx.fillStyle(c, 1);
+        gfx.fillRect(rx * px, ry * px, px, px);
+      }
+    }
+    gfx.setPosition(x - (w * px) / 2, y - (h * px) / 2);
+    gfx.setAlpha(0);
+    gfx.setScale(1.3);
+    return gfx;
   }
 
   createGlowOrb(x, y, r, color, alpha) {

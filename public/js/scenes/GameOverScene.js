@@ -63,7 +63,10 @@ class GameOverScene extends Phaser.Scene {
       document.getElementById('gameover-story').textContent = gameover.verhaal || '';
       document.getElementById('gameover-closer').textContent = gameover.afsluitZin || '';
 
-      if (gameover.rank && RANKS[gameover.rank]) {
+      if (gameover.badge && gameover.badge.naam) {
+        document.getElementById('rank-icon').textContent = gameover.badge.emoji || rankData.icon;
+        document.getElementById('rank-name').textContent = gameover.badge.naam;
+      } else if (gameover.rank && RANKS[gameover.rank]) {
         document.getElementById('rank-name').textContent = gameover.rank.toUpperCase();
         document.getElementById('rank-icon').textContent = RANKS[gameover.rank].icon;
       }

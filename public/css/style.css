@@ -81,6 +81,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
   background: rgba(10, 10, 26, 0.92);
   backdrop-filter: blur(8px);
   animation: overlayIn 0.3s ease-out;
@@ -543,7 +544,14 @@ html, body {
 .quiz-panel {
   width: 95%;
   max-width: 700px;
+  max-height: 98vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
   padding: 24px;
+  background: var(--bg-panel);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 6px;
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.06), inset 0 0 60px rgba(0, 0, 0, 0.2);
 }
 
 .quiz-top-bar {
@@ -675,14 +683,14 @@ html, body {
 
 .quiz-question {
   font-family: var(--font-body);
-  font-size: 26px;
+  font-size: clamp(18px, 3vw, 24px);
   font-weight: 800;
   text-align: center;
   color: var(--text);
   margin-bottom: 28px;
-  line-height: 1.45;
+  line-height: 1.5;
   padding: 22px 20px;
-  background: var(--bg-panel);
+  background: var(--bg-card);
   border: 1px solid rgba(0, 240, 255, 0.15);
   border-radius: 4px;
 }
@@ -821,21 +829,36 @@ html, body {
 }
 
 .next-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--primary);
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(255, 0, 170, 0.12));
+  border: 2px solid var(--primary);
   color: var(--primary);
   font-family: var(--font-display);
-  font-size: 12px;
-  padding: 14px 36px;
-  border-radius: 3px;
+  font-size: 13px;
+  padding: 16px 48px;
+  border-radius: 4px;
   cursor: pointer;
-  letter-spacing: 2px;
-  transition: all 0.15s ease;
+  letter-spacing: 3px;
+  transition: all 0.2s ease;
+  text-shadow: var(--glow-primary);
+  box-shadow: var(--glow-primary);
 }
 
 .next-btn:hover {
-  background: rgba(0, 240, 255, 0.1);
-  box-shadow: var(--glow-primary);
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.22), rgba(255, 0, 170, 0.22));
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.45), 0 0 60px rgba(0, 240, 255, 0.15);
+}
+
+.next-btn:active {
+  transform: translateY(0);
+}
+
+.next-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ============================================
@@ -1079,15 +1102,24 @@ html, body {
    ============================================ */
 
 .quiz-question.loading-question {
-  color: var(--text-dim);
+  color: transparent;
   animation: pulse 1s ease-in-out infinite;
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .quiz-question.loading-question::after {
-  content: 'AI genereert je vraag...';
-  display: block;
-  font-size: 14px;
-  color: var(--text-dim);
+  content: '⚡ AI genereert je vraag...';
+  position: absolute;
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  text-shadow: var(--glow-primary);
+  letter-spacing: 1px;
 }
 
 /* ============================================
@@ -1266,4 +1298,109 @@ html, body {
   .difficulty-row {
     flex-wrap: wrap;
   }
+}
+
+/* ============================================
+   MINI-GAME OVERLAY
+   ============================================ */
+
+.minigame-panel {
+  background: var(--bg-panel);
+  border: 2px solid var(--secondary);
+  box-shadow: 0 0 14px rgba(255,0,170,.4), 0 0 50px rgba(255,0,170,.12);
+  border-radius: 12px;
+  padding: 24px 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 500px;
+  width: 96%;
+  animation: panel-in .25s ease-out;
+}
+
+.minigame-header {
+  text-align: center;
+  line-height: 1.3;
+}
+
+.minigame-eyebrow {
+  font-family: var(--font-display);
+  font-size: 9px;
+  color: var(--secondary);
+  letter-spacing: .12em;
+  margin-bottom: 6px;
+  animation: pulse-glow 1.2s ease-in-out infinite alternate;
+}
+
+.minigame-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--primary);
+  text-shadow: var(--glow-primary);
+  letter-spacing: .06em;
+}
+
+.minigame-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 9px;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.mg-val {
+  color: var(--primary);
+  font-size: 11px;
+}
+
+.mg-bonus {
+  color: var(--accent);
+  font-size: 11px;
+  text-shadow: 0 0 10px rgba(255,230,0,.6);
+  min-height: 1em;
+  animation: pop-in .3s ease-out;
+}
+
+#minigame-canvas {
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 12px rgba(0,240,255,.25);
+  border-radius: 6px;
+  display: block;
+  max-width: 100%;
+  cursor: none;
+}
+
+.mg-controls {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+  min-height: 1.2em;
+}
+
+.skip-btn {
+  background: transparent;
+  border: 1px solid var(--text-dim);
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-size: 9px;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+  letter-spacing: .08em;
+}
+
+.skip-btn:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
 }

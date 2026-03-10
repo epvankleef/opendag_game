@@ -15,6 +15,7 @@ class QuizScene extends Phaser.Scene {
     this.timerRunning = false;
     this.timeLeft = 0;
     this.answered = false;
+    this.isLoading = false;
   }
 
   create() {
@@ -23,6 +24,7 @@ class QuizScene extends Phaser.Scene {
 
     // Set up next button handler
     document.getElementById('next-btn').onclick = () => {
+      document.getElementById('next-btn').disabled = true;
       this.nextQuestion();
     };
 
@@ -50,6 +52,8 @@ class QuizScene extends Phaser.Scene {
   }
 
   async loadQuestion() {
+    if (this.isLoading) return;
+    this.isLoading = true;
     this.answered = false;
     this.currentQuestion++;
 
@@ -65,6 +69,9 @@ class QuizScene extends Phaser.Scene {
     document.getElementById('quiz-intro').textContent = '';
     document.getElementById('timer-text').textContent = '';
     document.getElementById('quiz-question').classList.add('loading-question');
+
+    // Scroll naar top van het panel zodat de vraag altijd zichtbaar start
+    document.querySelector('.quiz-panel').scrollTop = 0;
 
     // Determine if this is a boss question
     const isBoss = this.settings.modifier === 'boss' && this.currentQuestion === GAME_CONFIG.totalQuestions;
@@ -121,14 +128,16 @@ class QuizScene extends Phaser.Scene {
         answersDiv.appendChild(btn);
       });
 
+      this.isLoading = false;
       // Start timer
       this.startTimer();
 
     } catch (error) {
       console.error('Error loading question:', error);
+      this.isLoading = false;
+      this.currentQuestion--;
       document.getElementById('quiz-question').textContent = 'Oeps! Kon geen vraag laden. Even geduld...';
       setTimeout(() => this.loadQuestion(), 2000);
-      this.currentQuestion--;
     }
   }
 
@@ -291,16 +300,25 @@ class QuizScene extends Phaser.Scene {
     const feedbackDiv = document.getElementById('quiz-feedback');
     const feedbackText = document.getElementById('feedback-text');
     const feedbackExpl = document.getElementById('feedback-explanation');
+    const nextBtn = document.getElementById('next-btn');
 
     feedbackText.textContent = text;
     feedbackText.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
     feedbackExpl.textContent = explanation || '';
+    nextBtn.disabled = false;
     feedbackDiv.classList.remove('hidden');
 
     // Update next button text on last question
     if (this.currentQuestion >= GAME_CONFIG.totalQuestions) {
-      document.getElementById('next-btn').textContent = 'BEKIJK RESULTAAT ▶';
+      nextBtn.textContent = 'BEKIJK RESULTAAT ▶';
+    } else {
+      nextBtn.textContent = 'VOLGENDE ▶';
     }
+
+    // Scroll zodat feedback en VOLGENDE-knop altijd zichtbaar zijn
+    setTimeout(() => {
+      feedbackDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
   }
 
   showScorePopup(points) {
@@ -333,9 +351,12 @@ class QuizScene extends Phaser.Scene {
         totalQuestions: GAME_CONFIG.totalQuestions,
         highestStreak: this.highestStreak,
       });
-    } else if (this.currentQuestion === 3 || this.currentQuestion === 6) {
-      // Show fun fact / opleiding tip after question 3 and 6
+    } else if (this.currentQuestion === 3) {
+      // Fun fact after question 3
       this.showFunFact();
+    } else if (this.currentQuestion === 6) {
+      // Mini-game after question 6
+      this.showMiniGame();
     } else {
       this.loadQuestion();
     }
@@ -382,6 +403,21 @@ class QuizScene extends Phaser.Scene {
       quizOverlay.classList.remove('hidden');
       this.loadQuestion();
     };
+  }
+
+  showMiniGame() {
+    const quizOverlay = document.getElementById('quiz-overlay');
+    quizOverlay.classList.add('hidden');
+
+    MiniGames.show((bonusPoints) => {
+      if (bonusPoints > 0) {
+        this.score += bonusPoints;
+        document.getElementById('quiz-score').textContent = this.score;
+        this.showScorePopup(bonusPoints);
+      }
+      quizOverlay.classList.remove('hidden');
+      this.loadQuestion();
+    });
   }
 
   shutdown() {

@@ -32,6 +32,7 @@ async function callOllama(prompt) {
       model: OLLAMA_MODEL,
       prompt: prompt,
       stream: false,
+      format: 'json',
       options: {
         temperature: 0.8,
         num_predict: 1024,
@@ -57,6 +58,7 @@ async function callOpenAI(prompt) {
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.8,
     max_tokens: 1024,
+    response_format: { type: 'json_object' },
   });
   return completion.choices[0].message.content;
 }
@@ -67,6 +69,7 @@ async function callGemini(prompt) {
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.0-flash',
+    generationConfig: { responseMimeType: 'application/json' },
     safetySettings: [
       { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE },
       { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE },
@@ -80,13 +83,32 @@ async function callGemini(prompt) {
 
 // Helper: parse JSON uit LLM response
 function parseJSON(text) {
-  const cleaned = text.replace(/```json\n?|\n?```/g, '').trim();
-  // Probeer JSON te vinden in de response
-  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    return JSON.parse(jsonMatch[0]);
+  const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+  // Probeer eerst direct parsen
+  try {
+    return JSON.parse(cleaned);
+  } catch {}
+
+  // Zoek het eerste { en tel balanced braces om het exacte JSON-object te vinden
+  const start = cleaned.indexOf('{');
+  if (start !== -1) {
+    let depth = 0;
+    for (let i = start; i < cleaned.length; i++) {
+      if (cleaned[i] === '{') depth++;
+      else if (cleaned[i] === '}') {
+        depth--;
+        if (depth === 0) {
+          try {
+            return JSON.parse(cleaned.slice(start, i + 1));
+          } catch {}
+          break;
+        }
+      }
+    }
   }
-  return JSON.parse(cleaned);
+
+  throw new Error('Kon geen geldige JSON vinden in LLM response');
 }
 
 // ============================================
@@ -314,10 +336,15 @@ Antwoord in dit exacte JSON formaat:
   "titel": "een unieke, grappige persoonlijke titel voor de speler (max 6 woorden)",
   "verhaal": "een kort verhaaltje (2-3 zinnen) over de prestatie van de speler, in karakter",
   "rank": "Bronze/Silver/Gold/Platinum/Diamond gebaseerd op percentage",
+  "badge": {
+    "emoji": "1 unieke emoji die perfect past bij de prestatie",
+    "naam": "een unieke grappige badge naam (max 4 woorden, bijv: 'De Hardnekkige Bug', 'De Voltage Viper', 'De Almachtige Prompt Engineer', 'De WiFi Warrior', 'De Absolute Debugger')"
+  },
   "afsluitZin": "een epische afsluitzin in karakter (max 10 woorden)"
 }
 
-Rank regels: <30%=Bronze, <50%=Silver, <70%=Gold, <90%=Platinum, >=90%=Diamond`;
+Rank regels: <30%=Bronze, <50%=Silver, <70%=Gold, <90%=Platinum, >=90%=Diamond
+Badge moet uniek en grappig zijn, gebaseerd op de score, streak en het thema. Bij lage score: zelfspot. Bij hoge score: episch.`;
 
     const text = await callLLM(prompt);
     const gameover = parseJSON(text);
@@ -428,6 +455,47 @@ app.post('/api/highscores', (req, res) => {
   const allScores = getTopScores.all();
   const positie = allScores.findIndex(h => h.naam === naam && h.score === (Number(score) || 0)) + 1;
   res.json({ success: true, positie });
+});
+
+// GET /api/game-title — AI-gegenereerde gamenaam
+app.get('/api/game-title', async (_req, res) => {
+  const prompt = `${SYSTEM_PROMPT}
+
+De quiz game heet "WEDOTECH" en heeft elke keer een andere grappige bestandsextensie.
+
+Verzin een grappige, tech-gerelateerde bestandsextensie voor de naam "WEDOTECH".
+Voorbeelden: .EXE, .PY, .JS, .DLL, .BAT, .AI, .JAR, .APK, .ROM, .BIN, .CPP, .JAVA
+Mag ook iets langer/grappiger: .CRASH, .NULL, .404, .LOOP, .SUDO, .REBOOT, .DEBUG
+
+Kies elke keer iets anders en verrassends. Altijd IN HOOFDLETTERS met punt ervoor.
+
+Antwoord in dit exacte JSON formaat:
+{
+  "extensie": ".EXE"
+}`;
+
+  try {
+    const text = await callLLM(prompt);
+    const data = parseJSON(text);
+    const ext  = (data.extensie || '.QUIZ').toUpperCase().slice(0, 10);
+    res.json({ extensie: ext });
+  } catch (err) {
+    console.error('game-title error:', err.message);
+    const fallbacks = [
+      { extensie: '.EXE'    },
+      { extensie: '.PY'     },
+      { extensie: '.AI'     },
+      { extensie: '.DEBUG'  },
+      { extensie: '.CRASH'  },
+      { extensie: '.JS'     },
+      { extensie: '.NULL'   },
+      { extensie: '.REBOOT' },
+      // placeholder for old format below
+      { woord: 'NULL',     extensie: '.DLL' },
+    ];
+    const pick = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    res.json(pick);
+  }
 });
 
 app.listen(PORT, () => {

@@ -45,6 +45,11 @@ const API = {
     return res.json();
   },
 
+  async getGameTitle() {
+    const res = await fetch('/api/game-title');
+    return res.json();
+  },
+
   async getHighscores() {
     const res = await fetch('/api/highscores');
     return res.json();

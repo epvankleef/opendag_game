@@ -12,4 +12,7 @@ const config = {
   scene: [BootScene, TitleScene, SetupScene, LoadingScene, QuizScene, GameOverScene],
 };
 
-const game = new Phaser.Game(config);
+// Wait for fonts to load before starting Phaser so canvas text renders correctly
+document.fonts.ready.then(() => {
+  new Phaser.Game(config);
+});

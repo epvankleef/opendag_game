@@ -41,11 +41,9 @@ class GameOverScene extends Phaser.Scene {
     document.getElementById('rank-icon').textContent = rankData.icon;
     document.getElementById('rank-name').textContent = rank.toUpperCase();
 
-    // Set rank color
+    // Reset panel class
     const panel = document.querySelector('.gameover-panel');
     panel.className = 'gameover-panel';
-    panel.style.borderColor = rankData.color;
-    panel.style.boxShadow = `0 0 10px ${rankData.color}50, 0 0 40px ${rankData.color}20`;
 
     // Set stats
     document.getElementById('final-score').textContent = this.score;
@@ -59,10 +57,12 @@ class GameOverScene extends Phaser.Scene {
 
     // Reset highscore section
     document.getElementById('highscore-submit').classList.remove('hidden');
-    document.getElementById('leaderboard').classList.add('hidden');
     document.getElementById('player-name').value = '';
 
     overlay.classList.remove('hidden');
+
+    // Show leaderboard immediately
+    this.showLeaderboard();
 
     // Get AI game over data
     try {

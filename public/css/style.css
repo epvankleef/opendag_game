@@ -1019,15 +1019,20 @@ html, body {
    Game Over Panel
    ============================================ */
 
+#gameover-overlay {
+  align-items: flex-start;
+  padding: 20px 0;
+}
+
 .gameover-panel {
   text-align: center;
-  padding: 36px;
-  background: var(--bg-panel);
-  border: 2px solid var(--accent);
-  box-shadow: var(--glow-accent);
-  border-radius: 4px;
-  max-width: 900px;
-  width: 95%;
+  padding: 36px 48px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  width: 100%;
+  max-width: 100%;
   animation: characterReveal 0.5s ease-out;
 }
 

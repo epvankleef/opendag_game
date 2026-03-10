@@ -1,0 +1,6 @@
+node_modules
+highscores.db
+test_screenshots
+playwright_test.js
+.env
+.git

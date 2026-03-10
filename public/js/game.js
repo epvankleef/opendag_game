@@ -12,7 +12,10 @@ const config = {
   scene: [BootScene, TitleScene, SetupScene, LoadingScene, QuizScene, GameOverScene],
 };
 
-// Wait for fonts to load before starting Phaser so canvas text renders correctly
-document.fonts.ready.then(() => {
+// Explicitly load fonts before starting Phaser so canvas text renders correctly
+Promise.all([
+  document.fonts.load('16px "Press Start 2P"'),
+  document.fonts.load('16px "Exo 2"'),
+]).then(() => {
   new Phaser.Game(config);
 });
